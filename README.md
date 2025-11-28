@@ -23,7 +23,7 @@ The theoretical foundation and mathematical proof of NLCS.
 * **📖 [Read Online (Notion)](https://www.notion.so/NLCS_S_Engine_Whitepaper_v2-1-EN-2b9b839d7a768092ac47eeb48aecc281)** 👈 *(Recommended for mobile)*
 * **[English PDF]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
 * **[Korean PDF]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./NLCS_S_Engine_Whitepaper_v2.1.pdf)
-* **[Korean Notion]** [웹으로 읽기 (한글)](ttps://www.notion.so/NLCS_S_Engine_Whitepaper_v2-1-2b9b839d7a7680388963da9444ba127c)
+* **[Korean Notion]** [웹으로 읽기 (한글)](https://www.notion.so/AGI-2b8b839d7a76809a8604c6768271c5be?pvs=12)
 
 ### 📜 Vision Manifesto (v1.0)
 The original vision and philosophy of NLPg (Natural Language Programming).
