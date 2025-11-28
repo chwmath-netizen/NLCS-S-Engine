@@ -16,10 +16,22 @@ You can run the S-Engine simulators directly in your browser. These simulators a
 * **Combat Simulator (v8.4):** Validates real-time combat logic and vector gravity fields.
 * **Growth Simulator (v2.0):** Validates economic balance and long-term resource planning.
 
-## 3. Core Documents
-* **📄 [Technical Whitepaper v2.1 (English)](./NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)**: Comprehensive theory including Vector Gravity Field and Margin Collapse.
-* **📄 [기술 백서 v2.1 (Korean)](./NLCS_S_Engine_Whitepaper_v2.1.pdf)**: 한국어 원문 백서.
-* **🤖 [AI Consensus Report](./Cross_AI_Evaluation_NLCS_S_Engine_EN.pdf)**: Independent evaluation by GPT-5.1, Claude Opus 4.5, and Gemini 3.0.
+## 3. Core Documents (Download)
+
+### 📘 Technical Whitepaper (v2.1)
+The theoretical foundation and mathematical proof of NLCS.
+* **[English Ver.]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
+* **[Korean Ver.]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./NLCS_S_Engine_Whitepaper_v2.1.pdf)
+
+### 📜 Vision Manifesto (v1.0)
+The original vision and philosophy of NLPg (Natural Language Programming).
+* **[English Ver.]** [Natural_Language_Based_AGI_Whitepaper_Full.pdf](./Natural_Language_Based_AGI_Whitepaper_Full.pdf)
+* **[Korean Ver.]** [자연어 기반 AGI 백서.pdf](./자연어%20기반%20AGI%20백서.pdf) *(Original Government Submission)*
+
+### 🤖 AI Consensus Report
+Independent evaluation by GPT-5.1, Claude Opus 4.5, and Gemini 3.0.
+* **[English Ver.]** [AI_Consensus_Report_2025_EN.pdf](./AI_Consensus_Report_2025_EN.pdf)
+* **[Korean Ver.]** [AI_Consensus_Report_2025.pdf](./AI_Consensus_Report_2025.pdf)
 
 ## 4. Key Concepts
 * **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical outcomes.
