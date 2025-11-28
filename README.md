@@ -44,3 +44,4 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 **Author:** ShadowK (Hyunwoo Cho)
 *Independent AI Researcher & Natural Language System Architect*
+📧 **Contact:** chwmath@naver.com
