@@ -11,7 +11,7 @@ NLCS is a novel methodology that transforms Large Language Models (LLMs) from pr
 ## 2. Live Demo (Try it now)
 You can run the S-Engine simulators directly in your browser. These simulators are generated purely based on NLCS rules.
 
-👉 **[Click Here to Launch S-Engine Console](https://chwmath-netizen.github.io/NLCS-S-Engine/)**
+👉 **[Click Here to Launch S-Engine Console](https://glistening-sundae-5ae31d.netlify.app/)**
 
 * **Combat Simulator (v8.4):** Validates real-time combat logic and vector gravity fields.
 * **Growth Simulator (v2.0):** Validates economic balance and long-term resource planning.
