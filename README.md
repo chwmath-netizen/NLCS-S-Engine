@@ -40,10 +40,15 @@ Independent evaluation by GPT-5.1, Claude Opus 4.5, and Gemini 3.0.
 * **[English Ver.]** [AI_Consensus_Report_2025_EN.pdf](./AI_Consensus_Report_2025_EN.pdf)
 * **[Korean Ver.]** [AI_Consensus_Report_2025.pdf](./AI_Consensus_Report_2025.pdf)
 
-### 💬 S-Engine Dialogue with Gemini
-Deep conversation about S-Engine's internal structure, Vector Gravity, and the philosophy of "AI as Extended Brain".
+### 💬 S-Engine Dialogues (Live Web)
+Deep conversations about S-Engine's internal structure and logic verification.
 
-* **📖 [Read Online (GitHub Pages)](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-dialogue/index.html)** 👈 *(NEW)*
+* **🌌 Gemini Pro Analysis (Main)**
+  * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-dialogue/)** 👈 *(Best Visual Experience)*
+  * [📄 Read Original Text Version](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-original/)
+
+* **🤖 Claude Opus 4.5 Verification**
+  * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/claude-dialogue/)** 👈 *(NEW)*
 
 ## 4. Key Concepts
 
