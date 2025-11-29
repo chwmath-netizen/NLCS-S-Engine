@@ -43,7 +43,7 @@ Independent evaluation by GPT-5.1, Claude Opus 4.5, and Gemini 3.0.
 ### 💬 S-Engine Dialogue with Gemini
 Deep conversation about S-Engine's internal structure, Vector Gravity, and the philosophy of "AI as Extended Brain".
 
-* **📖 [Read Online (GitHub Pages)]([gemini-dialogue/index.html])** 👈 *(NEW)*
+* **📖 [Read Online (GitHub Pages)](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-dialogue/index.html)** 👈 *(NEW)*
 
 ## 4. Key Concepts
 
