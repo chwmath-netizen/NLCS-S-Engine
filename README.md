@@ -45,7 +45,7 @@ Deep conversations about S-Engine's internal structure and logic verification.
 
 * **🌌 Gemini Pro Analysis (Main)**
   * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-dialogue/)** 👈 *(Best Visual Experience)*
-  * [📄 Read Original Text Version](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-original/)
+  * [📄 Read Original Text Version](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-original/)** 👈 *(Original)*
 
 * **🤖 Claude Opus 4.5 Verification**
   * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/claude-dialogue/)** 👈 *(NEW)*
