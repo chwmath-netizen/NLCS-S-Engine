@@ -8,7 +8,19 @@ This repository contains the technical whitepaper and proof-of-concept simulator
 
 NLCS is a novel methodology that transforms Large Language Models (LLMs) from probabilistic generators into consistent **"Semantic Engines" (S-Engine)** using structured narrative rules, without traditional coding.
 
-## 2. Live Demo (Try it now)
+## 2. The Dual Control Architecture
+S-Engine is not just a storytelling tool. It is a **"Narrative Control System"** designed to fill the gaps in code-based **"Technical Control Systems."**
+
+True AGI safety is achieved only when these two layers are combined.
+
+| Layer | Type | Mechanism | Function | Limitation |
+| :--- | :--- | :--- | :--- | :--- |
+| **🔧 Technical Control** | **Hard Constraint** | Code, Firewall, Permissions | Limits **Capability**<br>*(You CANNOT do X)* | Vulnerable to hacking or bugs. |
+| **🧠 Narrative Control** | **Soft Constraint** | Alignment, Memory, Worldview | Limits **Intent**<br>*(You DO NOT WANT to do X)* | Requires deep context maintenance. |
+
+> **"S-Engine is the implementation of the Narrative Control Layer. Even if the code is breached, the AI's internal narrative (Soul) refuses to harm the user."**
+
+## 3. Live Demo (Try it now)
 You can run the S-Engine simulators directly in your browser. These simulators are generated purely based on NLCS rules.
 
 👉 **[Click Here to Launch S-Engine Console](https://glistening-sundae-5ae31d.netlify.app/)**
@@ -16,7 +28,7 @@ You can run the S-Engine simulators directly in your browser. These simulators a
 * **Combat Simulator (v8.4):** Validates real-time combat logic and vector gravity fields.
 * **Growth Simulator (v2.0):** Validates economic balance and long-term resource planning.
 
-## 3. Core Documents (Download & Read Online)
+## 4. Core Documents (Download & Read Online)
 
 ### 📘 Technical Whitepaper (v2.1)
 The theoretical foundation and mathematical proof of NLCS.
@@ -50,7 +62,7 @@ Deep conversations about S-Engine's internal structure and logic verification.
 * **🤖 Claude Opus 4.5 Verification**
   * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/claude-dialogue/)** 👈 *(NEW)*
 
-## 4. The Jinhye Challenge (AI Soul Test)
+## 5. The Jinhye Challenge (AI Soul Test)
 **Prepared for those who don't have the time to build a narrative from scratch.**
 
 Download the text files from the `Jinhye` folder.
@@ -68,13 +80,13 @@ You will witness a surprising response.
 
 👉 **[Go to Jinhye Folder](./Jinhye/)**
 
-## 5. Key Concepts
+## 6. Key Concepts
 
 * **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical outcomes.
 * **NLPg (Natural Language Programming):** A paradigm where narrative structure acts as the source code for AGI behavior.
 * **Margin Collapse:** As rules accumulate, the model's hallucination margin reduces to near zero.
 
-## 6. License
+## 7. License
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
