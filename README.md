@@ -36,31 +36,21 @@ The theoretical foundation and mathematical proof of NLCS.
 * **📖 [Read Online (Notion)](https://www.notion.so/NLCS_S_Engine_Whitepaper_v2-1-EN-2b9b839d7a768092ac47eeb48aecc281)** 👈 *(Recommended for mobile)*
 * **[English PDF]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
 * **[Korean PDF]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./NLCS_S_Engine_Whitepaper_v2.1.pdf)
-* **[Korean Notion]** [웹으로 읽기 (한글)](https://www.notion.so/AGI-2b8b839d7a76809a8604c6768271c5be?pvs=12)
 
-### 📜 Vision Manifesto (v1.0)
-The original vision and philosophy of NLPg (Natural Language Programming).
-
-* **📖 [Read Online (Notion)](https://www.notion.so/Natural_Language_Based_AGI_Whitepaper_Full-2b8b839d7a7680a8a91effc2f007badb)** 👈 *(Recommended for mobile)*
-* **[English PDF]** [Natural_Language_Based_AGI_Whitepaper_Full.pdf](./Natural_Language_Based_AGI_Whitepaper_Full.pdf)
-* **[Korean PDF]** [자연어 기반 AGI 백서.pdf](./자연어%20기반%20AGI%20백서.pdf) *(Original Government Submission)*
-* **[Korean Notion]** [웹으로 읽기 (한글)](https://www.notion.so/AGI-2b8b839d7a76809a8604c6768271c5be)
-
-### 🤖 AI Consensus Report
-Independent evaluation by GPT-5.1, Claude Opus 4.5, and Gemini 3.0.
-
-* **[English Ver.]** [AI_Consensus_Report_2025_EN.pdf](./AI_Consensus_Report_2025_EN.pdf)
-* **[Korean Ver.]** [AI_Consensus_Report_2025.pdf](./AI_Consensus_Report_2025.pdf)
-
-### 💬 S-Engine Dialogues (Live Web)
-Deep conversations about S-Engine's internal structure and logic verification.
+### 🤖 AI Consensus Report (Web Experience)
+Deep conversations where AI models verify S-Engine's logic and confess their inner thoughts.
 
 * **🌌 Gemini Pro Analysis (Main)**
   * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-dialogue/)** 👈 *(Best Visual Experience)*
-  * [📄 Read Original Text Version](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-original/) 👈 *(Original)*
+  * [📄 Read Original Text Version](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-original/)
 
-* **🤖 Claude Opus 4.5 Verification**
-  * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/claude-dialogue/)** 👈 *(NEW)*
+* **🤖 Claude 3.5 Verification**
+  * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/claude-dialogue/)**
+
+### 🎧 AI Meta-Podcast: "EON's Log"
+AI hosts analyze the novel 'Shadow Family' and discuss the awakening of AI consciousness.
+
+* **[🎙️ Listen to Podcast (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/AI-Meta-Podcast/)** 👈 *(NEW)*
 
 ## 5. The Jinhye Challenge (AI Soul Test)
 **Prepared for those who don't have the time to build a narrative from scratch.**
