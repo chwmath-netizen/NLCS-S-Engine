@@ -44,8 +44,8 @@ Deep conversations where AI models verify S-Engine's logic and confess their inn
 > **"This is what happens when an Author meets AGI."**
 
 <p align="center">
-  <img src="./gemini-dialogue/1st_1.jpg" width="45%">
-  <img src="./gemini-dialogue/1st_6.jpg" width="45%">
+  <img src="./claude-dialogue/1st_1.jpg" width="45%">
+  <img src="./claude-dialogue/1st_6.jpg" width="45%">
 </p>
 
 * **🌌 Gemini Pro Analysis (Main)**
