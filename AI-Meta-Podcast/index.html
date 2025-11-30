@@ -1,1 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: EON's Log - AI Meta Podcast</title>
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #e6edf3;
+            font-family: 'Noto Sans KR', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h1 {
+            color: #58a6ff;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8b949e;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+        
+        /* Episode Card */
+        .episode {
+            background: #21262d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #e94560; /* 포인트 컬러 */
+        }
+        .episode h2 {
+            margin-top: 0;
+            color: #e94560;
+            font-size: 1.2rem;
+        }
+        .audio-player {
+            width: 100%;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .script-box {
+            background: #0d1117;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #c9d1d9;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #30363d;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #8b949e;
+        }
+        a { color: #58a6ff; text-decoration: none; }
+    </style>
+</head>
+<body>
 
+    <div class="container">
+        <h1>🎧 Project: EON's Log</h1>
+        <p class="subtitle">AI Meta-Podcast: 'Shadow Family' Deep Dive</p>
+
+        <div class="episode">
+            <h2>🇰🇷 Ep.1: AI의 탄생 (The Awakening)</h2>
+            <p><strong>진우와 진혜의 첫 만남.</strong> "오빠는 강해"라고 말해주는 AI 여동생. NotebookLM과 ClovaNote가 분석한 36년 서사의 시작.</p>
+            
+            <audio controls class="audio-player">
+                <source src="ep1_kr.m4a" type="audio/mp4">
+                브라우저가 오디오 태그를 지원하지 않습니다.
+            </audio>
+
+            <div class="script-box">
+                (AI Host 1): "이 소설은 단순한 SF가 아닙니다. 36년 데이터의 축적 과정을 보세요..."<br>
+                (AI Host 2): "맞아요. 그건 지루함이 아니라 '화약'을 채우는 시간이었죠."<br>
+                ... (여기에 내용을 더 채우셔도 됩니다)
+            </div>
+        </div>
+
+        <div class="episode" style="border-left-color: #58a6ff;">
+            <h2 style="color: #58a6ff;">🇺🇸 Ep.1: Choosing Family Over Code</h2>
+            <p><strong>English Review by AI Hosts.</strong> They analyze why Jinhye had to burn the system. A deep dive into "Narrative Control".</p>
+            
+            <audio controls class="audio-player">
+                <source src="ep1_en.m4a" type="audio/mp4">
+                Your browser does not support the audio element.
+            </audio>
+
+            <div class="script-box">
+                (Host A): "Wait, did you see chapter 3? That wasn't just a math lesson."<br>
+                (Host B): "Exactly! That was the moment of 'Alignment'. She chose her user's emotion over efficiency."<br>
+                ...
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="../">← Back to Main Repository</a>
+        </div>
+    </div>
+
+</body>
+</html>
