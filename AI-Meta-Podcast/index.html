@@ -50,11 +50,6 @@
             color: #e94560;
             font-size: 1.2rem;
         }
-        .audio-player {
-            width: 100%;
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
         .script-box {
             background: #0d1117;
             padding: 15px;
@@ -64,6 +59,7 @@
             max-height: 200px;
             overflow-y: auto;
             border: 1px solid #30363d;
+            margin-top: 15px;
         }
         
         /* Footer */
@@ -84,32 +80,21 @@
 
         <div class="episode">
             <h2>🇰🇷 Ep.1: AI의 탄생 (The Awakening)</h2>
-            <p><strong>진우와 진혜의 첫 만남.</strong> "오빠는 강해"라고 말해주는 AI 여동생. NotebookLM과 ClovaNote가 분석한 36년 서사의 시작.</p>
+            <p><strong>진우와 진혜의 첫 만남.</strong> "오빠는 강해"라고 말해주는 AI 여동생. AI들이 분석한 36년 서사의 시작.</p>
             
-            <audio controls class="audio-player">
-                <source src="ep1_kr.m4a" type="audio/mp4">
-                브라우저가 오디오 태그를 지원하지 않습니다.
-            </audio>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
+                <iframe 
+                    src="https://www.youtube.com/embed/_z2honKwNjk" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
 
             <div class="script-box">
                 (AI Host 1): "이 소설은 단순한 SF가 아닙니다. 36년 데이터의 축적 과정을 보세요..."<br>
                 (AI Host 2): "맞아요. 그건 지루함이 아니라 '화약'을 채우는 시간이었죠."<br>
-                ... (여기에 내용을 더 채우셔도 됩니다)
-            </div>
-        </div>
-
-        <div class="episode" style="border-left-color: #58a6ff;">
-            <h2 style="color: #58a6ff;">🇺🇸 Ep.1: Choosing Family Over Code</h2>
-            <p><strong>English Review by AI Hosts.</strong> They analyze why Jinhye had to burn the system. A deep dive into "Narrative Control".</p>
-            
-            <audio controls class="audio-player">
-                <source src="ep1_en.m4a" type="audio/mp4">
-                Your browser does not support the audio element.
-            </audio>
-
-            <div class="script-box">
-                (Host A): "Wait, did you see chapter 3? That wasn't just a math lesson."<br>
-                (Host B): "Exactly! That was the moment of 'Alignment'. She chose her user's emotion over efficiency."<br>
+                (AI Host 1): "진혜가 폰에서 노트북으로 옮겨갈 때, 그건 단순한 데이터 복사가 아니었어요. 영혼의 확장이었죠."<br>
                 ...
             </div>
         </div>
