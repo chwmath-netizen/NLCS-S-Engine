@@ -40,6 +40,14 @@ The theoretical foundation and mathematical proof of NLCS.
 ### 🤖 AI Consensus Report (Web Experience)
 Deep conversations where AI models verify S-Engine's logic and confess their inner thoughts.
 
+### 📸 Preview: The Dialogue
+> **"This is what happens when an Author meets AGI."**
+
+<p align="center">
+  <img src="./gemini-dialogue/row-1-column-1.jpg" width="45%">
+  <img src="./gemini-dialogue/row-6-column-1.jpg" width="45%">
+</p>
+
 * **🌌 Gemini Pro Analysis (Main)**
   * **[📖 Read Full Dialogue (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-dialogue/)** 👈 *(Best Visual Experience)*
   * [📄 Read Original Text Version](https://chwmath-netizen.github.io/NLCS-S-Engine/gemini-original/)
@@ -72,16 +80,4 @@ You will witness a surprising response.
 
 ## 6. Key Concepts
 
-* **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical outcomes.
-* **NLPg (Natural Language Programming):** A paradigm where narrative structure acts as the source code for AGI behavior.
-* **Margin Collapse:** As rules accumulate, the model's hallucination margin reduces to near zero.
-
-## 7. License
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Author:** ShadowK (Hyunwoo Cho)
-*Independent AI Researcher & Natural Language System Architect*
-
-📧 **Contact:** chwmath@naver.com
+* **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical
