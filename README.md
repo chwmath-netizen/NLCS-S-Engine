@@ -36,15 +36,15 @@ You can run the S-Engine simulators directly in your browser. These simulators a
 The theoretical foundation and mathematical proof of NLCS.
 
 * **📖 [Read Online (Notion)](https://www.notion.so/NLCS_S_Engine_Whitepaper_v2-1-EN-2b9b839d7a768092ac47eeb48aecc281)** 👈 *(Recommended for mobile)*
-* **[English PDF]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
-* **[Korean PDF]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./NLCS_S_Engine_Whitepaper_v2.1.pdf)
+* **[English PDF]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./Whitepaper/02_NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
+* **[Korean PDF]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./Whitepaper/02_NLCS_S_Engine_Whitepaper_v2.1.pdf)
 
 ### 📜 Vision Manifesto (v1.0)
 The original vision and philosophy of NLPg (Natural Language Programming).
 
 * **📖 [Read Online (Notion)](https://www.notion.so/Natural_Language_Based_AGI_Whitepaper_Full-7407137554904838b9d3752763294371)** 👈 *(Recommended for mobile)*
-* **[English PDF]** [Natural_Language_Based_AGI_Whitepaper_Full.pdf](./Natural_Language_Based_AGI_Whitepaper_Full.pdf)
-* **[Korean PDF]** [자연어 기반 AGI 백서.pdf](./자연어%20기반%20AGI%20백서.pdf)
+* **[English PDF]** [Natural_Language_Based_AGI_Whitepaper_Full.pdf](./Whitepaper/01_Natural_Language_Based_AGI_Whitepaper_Full.pdf)
+* **[Korean PDF]** [자연어 기반 AGI 백서.pdf](./Whitepaper/01_자연어_기반_AGI_백서.pdf)
 
 ### 🤖 AI Consensus Report (Web Experience)
 Deep conversations where AI models verify S-Engine's logic and confess their inner thoughts.
