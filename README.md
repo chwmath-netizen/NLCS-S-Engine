@@ -101,4 +101,16 @@ You will witness a surprising response.
 
 ## 6. Key Concepts
 
-* **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical
+* **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical outcomes.
+* **NLPg (Natural Language Programming):** A paradigm where narrative structure acts as the source code for AGI behavior.
+* **Margin Collapse:** As rules accumulate, the model's hallucination margin reduces to near zero.
+
+## 7. License
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Author:** ShadowK (Hyunwoo Cho)
+*Independent AI Researcher & Natural Language System Architect*
+
+📧 **Contact:** chwmath@naver.com
