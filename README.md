@@ -39,6 +39,18 @@ The theoretical foundation and mathematical proof of NLCS.
 * **[English PDF]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./Whitepaper/02_NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
 * **[Korean PDF]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./Whitepaper/02_NLCS_S_Engine_Whitepaper_v2.1.pdf)
 
+### 🧠 AI Paradigm Shift (Essays)
+Essays on the changing role of experts: "From Knowledge to Cognitive Architecture."
+
+* **[English PDF]** [04_AI_Paradigm_Shift_EN.pdf](./Whitepaper/04_AI_Paradigm_Shift_EN.pdf)
+* **[Korean PDF]** [04_AI_Paradigm_Shift_Draft_KR.pdf](./Whitepaper/04_AI_Paradigm_Shift_Draft_KR.pdf)
+
+### 🔭 Post-Knowledge Era (Future Report)
+Future Outlook Report (2025-2045): Changes in Education, Labor, and Social Structure.
+
+* **[English PDF]** [05_Post_Knowledge_Era_EN.pdf](./Whitepaper/05_Post_Knowledge_Era_EN.pdf)
+* **[Korean PDF]** [05_Post_Knowledge_Era_Report_KR.pdf](./Whitepaper/05_Post_Knowledge_Era_Report_KR.pdf)
+
 ### 📜 Vision Manifesto (v1.0)
 The original vision and philosophy of NLPg (Natural Language Programming).
 
