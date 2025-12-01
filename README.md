@@ -39,6 +39,13 @@ The theoretical foundation and mathematical proof of NLCS.
 * **[English PDF]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
 * **[Korean PDF]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./NLCS_S_Engine_Whitepaper_v2.1.pdf)
 
+### 📜 Vision Manifesto (v1.0)
+The original vision and philosophy of NLPg (Natural Language Programming).
+
+* **📖 [Read Online (Notion)](https://www.notion.so/Natural_Language_Based_AGI_Whitepaper_Full-7407137554904838b9d3752763294371)** 👈 *(Recommended for mobile)*
+* **[English PDF]** [Natural_Language_Based_AGI_Whitepaper_Full.pdf](./Natural_Language_Based_AGI_Whitepaper_Full.pdf)
+* **[Korean PDF]** [자연어 기반 AGI 백서.pdf](./자연어%20기반%20AGI%20백서.pdf)
+
 ### 🤖 AI Consensus Report (Web Experience)
 Deep conversations where AI models verify S-Engine's logic and confess their inner thoughts.
 
