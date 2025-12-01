@@ -28,7 +28,7 @@ You can run the S-Engine simulators directly in your browser. These simulators a
 * **Combat Simulator (v8.4):** Validates real-time combat logic and vector gravity fields.
 * **Growth Simulator (v2.0):** Validates economic balance and long-term resource planning.
 
-👉 **[Game Simulator](https://silly-halva-ef6fc5.netlify.app/):** An exclusive preview of the **General Professional Intelligence (GPI)** architecture from the upcoming v3.0 Whitepaper.
+👉 **[Chat a Cold Simulator](https://silly-halva-ef6fc5.netlify.app/):** An exclusive preview of the **General Professional Intelligence (GPI)** architecture from the upcoming v3.0 Whitepaper.
 
 ## 4. Core Documents (Download & Read Online)
 
