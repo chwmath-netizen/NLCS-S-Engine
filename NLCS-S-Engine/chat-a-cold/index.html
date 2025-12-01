@@ -1,1 +1,246 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S-ENGINE Medical Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+KR:wght@400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0a0a1a 0%, #1a1a3a 50%, #0a0a1a 100%);
+      color: #e0e0e0;
+      font-family: 'Noto Sans', 'Noto Sans KR', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+    }
+    
+    /* Title */
+    .main-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 50%, #4ecdc4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 8px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 30px rgba(78, 205, 196, 0.3);
+    }
+    
+    .sub-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      color: #888;
+      letter-spacing: 12px;
+      margin-bottom: 25px;
+    }
+    
+    .version-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(78, 205, 196, 0.15);
+      border: 1px solid rgba(78, 205, 196, 0.4);
+      border-radius: 20px;
+      color: #4ecdc4;
+      font-size: 0.85rem;
+      margin-bottom: 40px;
+    }
+    
+    .version-badge::before {
+      content: "🏥";
+      margin-right: 8px;
+    }
+    
+    /* Game Title */
+    .game-title {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ffd700, #ffaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+    }
+    
+    .game-desc {
+      color: #aaa;
+      font-size: 0.95rem;
+      margin-bottom: 50px;
+    }
+    
+    /* Language Cards */
+    .lang-container {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+    }
+    
+    .lang-card {
+      width: 280px;
+      padding: 40px 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .lang-card:hover {
+      background: rgba(78, 205, 196, 0.08);
+      border-color: rgba(78, 205, 196, 0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 40px rgba(78, 205, 196, 0.15);
+    }
+    
+    .lang-code {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+    
+    .lang-name {
+      font-size: 1.3rem;
+      color: #4ecdc4;
+      margin-bottom: 20px;
+    }
+    
+    .lang-desc {
+      color: #888;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+    
+    /* Features */
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+    }
+    
+    .feature {
+      text-align: center;
+      width: 100px;
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .feature-text {
+      font-size: 0.75rem;
+      color: #888;
+      line-height: 1.4;
+    }
+    
+    /* Footer */
+    .footer {
+      color: #555;
+      font-size: 0.8rem;
+      margin-top: auto;
+      padding-top: 30px;
+    }
+    
+    .footer a {
+      color: #4ecdc4;
+      text-decoration: none;
+    }
+    
+    .credit {
+      color: #ffd700;
+      font-style: italic;
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 600px) {
+      .main-title { font-size: 2.2rem; letter-spacing: 4px; }
+      .sub-title { font-size: 1rem; letter-spacing: 6px; }
+      .lang-card { width: 100%; max-width: 280px; }
+      .features { gap: 25px; }
+      .feature { width: 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="main-title">S-ENGINE</h1>
+    <div class="sub-title">MEDICAL EDITION</div>
+    
+    <div class="version-badge">v1.0 PROTOTYPE</div>
+    
+    <h2 class="game-title">ER Intern Simulator</h2>
+    <p class="game-desc">Cold Diagnosis Training • Symptom Recording • Sinusitis Trap • 95/100 Challenge</p>
+    
+    <div class="lang-container">
+      <a href="chat-a-cold.html" class="lang-card">
+        <div class="lang-code">KR</div>
+        <div class="lang-name">한국어</div>
+        <div class="lang-desc">
+          응급실 인턴 시뮬레이터<br>
+          감기 진단 훈련<br>
+          부비동염 함정 / 증상 기록
+        </div>
+      </a>
+      
+      <a href="chat-a-cold-en.html" class="lang-card">
+        <div class="lang-code">US</div>
+        <div class="lang-name">English</div>
+        <div class="lang-desc">
+          ER Intern Simulator<br>
+          Cold Diagnosis Training<br>
+          Sinusitis Trap / Symptom Recording
+        </div>
+      </a>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🩺</div>
+        <div class="feature-text">Patient<br>Interview</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📋</div>
+        <div class="feature-text">Symptom<br>Recording</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌡️</div>
+        <div class="feature-text">°C / °F<br>Toggle</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚠️</div>
+        <div class="feature-text">Sinusitis<br>Trap</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-text">95/100<br>Challenge</div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      S-Engine Medical Edition v1.0 | © ShadowK | <a href="#">Martial Arts Version</a>
+      <div class="credit">NLPg with S-Engine, Coded by Claude.</div>
+    </div>
+  </div>
+</body>
+</html>
