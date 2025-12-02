@@ -43,8 +43,8 @@ The theoretical foundation and mathematical proof of NLCS.
 
 A cognitive diagnosis of modern LLMs. This paper analyzes hallucinations and context collapse through the lens of **"Distracted Genius"** (ADHD-like pathology) and defines the **Narrative Control Gap**—the missing link between raw intelligence and stable directionality.
 
-* [English PDF] 06_LLM_Pathology_Whitepaper_EN.pdf
-* [Korean PDF] 06_LLM_Pathology_Whitepaper_KR.pdf
+* [English PDF] 06_LLM_Pathology_Whitepaper_EN.pdf(./Whitepaper/06_LLM_Pathology_Whitepaper_EN.pdf)
+* [Korean PDF] 06_LLM_Pathology_Whitepaper_KR.pdf(./Whitepaper/06_LLM_Pathology_Whitepaper_KR.pdf)
 
 ### 🧠 AI Paradigm Shift (Essays)
 Essays on the changing role of experts: "From Knowledge to Cognitive Architecture."
