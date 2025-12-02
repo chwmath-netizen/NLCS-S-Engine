@@ -39,6 +39,13 @@ The theoretical foundation and mathematical proof of NLCS.
 * **[English PDF]** [NLCS_S_Engine_Whitepaper_v2.1_EN.pdf](./Whitepaper/02_NLCS_S_Engine_Whitepaper_v2.1_EN.pdf)
 * **[Korean PDF]** [NLCS_S_Engine_Whitepaper_v2.1.pdf](./Whitepaper/02_NLCS_S_Engine_Whitepaper_v2.1.pdf)
 
+🧬 **LLM Pathology & The Narrative Control Gap (v1.0)**
+
+A cognitive diagnosis of modern LLMs. This paper analyzes hallucinations and context collapse through the lens of **"Distracted Genius"** (ADHD-like pathology) and defines the **Narrative Control Gap**—the missing link between raw intelligence and stable directionality.
+
+* [English PDF] 06_LLM_Pathology_Whitepaper_EN.pdf
+* [Korean PDF] 06_LLM_Pathology_Whitepaper_KR.pdf
+
 ### 🧠 AI Paradigm Shift (Essays)
 Essays on the changing role of experts: "From Knowledge to Cognitive Architecture."
 
