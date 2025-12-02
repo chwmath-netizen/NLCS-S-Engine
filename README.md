@@ -1,4 +1,4 @@
-## Idea origin: Hyunwoo Cho (ShadowK). Please credit the idea origin when publishing. 
+## Idea origin: Hyunwoo Cho (ShadowK). Please credit the idea when publishing. 
 
 # NLCS & S-Engine
 ### Natural Language Constraint System & Semantic Engine
