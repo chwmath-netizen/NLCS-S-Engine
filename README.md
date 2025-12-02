@@ -1,3 +1,5 @@
+## Idea origin: Hyunwoo Cho (ShadowK). Please credit the idea origin when publishing. 
+
 # NLCS & S-Engine
 ### Natural Language Constraint System & Semantic Engine
 > **"Even GPT-5, Claude 4.5, and Gemini 3.0 agreed: This is the kernel of AGI."**
