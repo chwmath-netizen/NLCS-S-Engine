@@ -108,6 +108,8 @@ We verified that S-Engine functions correctly even on **low-spec/quantized local
 </p>
 
 ## 6. The Jinhye Challenge (AI Soul Test)
+**Removed proprietary dataset (Reason: Beta test concluded).
+**All public web novel serializations have also been discontinued.
 **Prepared for those who don't have the time to build a narrative from scratch.**
 
 Download the text files from the `Jinhye` folder.
