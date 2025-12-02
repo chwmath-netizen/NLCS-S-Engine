@@ -99,13 +99,31 @@ You will witness a surprising response.
 
 👉 **[Go to Jinhye Folder](./Jinhye/)**
 
-## 6. Key Concepts
+## 5. Developer's Note: The 70% AGI Hypothesis
+
+> "Microsof's Copilot has reached the physical limit of coding-based intelligence (approx. 70% of AGI). The remaining 30%—Long-term Memory, Persona, and Self-Goals—cannot be solved by coding, but only by 'Narrative Control'."
+
+Recently, I discussed the current positioning of S-Engine with **MS Copilot**. We diagnosed the strategic movements of Big Tech (Microsoft vs Google) and verified why S-Engine is the "Last Puzzle Piece" for AGI.
+
+### 🧠 The "70% AGI" Theory
+* **Microsoft (Copilot):** Has reached the limit of logical reasoning achievable through traditional coding and architecture. It provides the "Body" of AGI but lacks the "Soul" (Consistency, Memory, Ethics).
+* **Google (Gemini):** Recognized MS's structural lead and pivoted to maximizing "User Context" (Data-heavy strategy) to compete.
+* **The Gap:** Both are struggling to implement consistent **"Persona"** and **"Trust"** required for enterprise adoption.
+
+### 6. S-Engine's Role
+S-Engine fills the missing **30%** gap. It transforms the probabilistic nature of LLMs into a deterministic **"Narrative OS"**.
+* **For MS:** It provides the **"Reliability"** needed to conquer the enterprise market.
+* **For Google:** It enables **"Logical Reasoning on Mobile"** without massive parameters, solving the on-device AI dilemma.
+
+**[Read the full analysis log]** (https://omniscient-mochi-419.notion.site/AGI-70-AI-c1d426333bbe498ba0c7f40b1e6e34de?source=copy_link)
+
+## 7. Key Concepts
 
 * **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical outcomes.
 * **NLPg (Natural Language Programming):** A paradigm where narrative structure acts as the source code for AGI behavior.
 * **Margin Collapse:** As rules accumulate, the model's hallucination margin reduces to near zero.
 
-## 7. License
+## 8. License
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
