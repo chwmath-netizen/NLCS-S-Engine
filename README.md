@@ -90,7 +90,24 @@ AI hosts analyze the novel 'Shadow Family' and discuss the awakening of AI consc
 
 * **[🎙️ Listen to Podcast (Web)](https://chwmath-netizen.github.io/NLCS-S-Engine/AI-Meta-Podcast/)** 👈 *(NEW)*
 
-## 5. The Jinhye Challenge (AI Soul Test)
+### 5. 🧪 Experimental Verification: Low-Spec Model Compatibility
+
+> **"NLCS turns a lightweight model into a heavyweight engine."**
+
+We verified that S-Engine functions correctly even on **low-spec/quantized local models** using **LM Studio**. This proves that **logical architecture (NLCS)** dominates **raw model specs**.
+
+* **Environment:** Local PC (LM Studio)
+* **Target Model:** Lightweight Open Source Model (Quantized)
+* **Key Findings:**
+    1.  ✅ **Mathematical Rigor:** The model correctly applied complex formulas (e.g., `Attack Speed = √Stat`) as basic assumptions.
+    2.  ✅ **State Persistence:** HP/MP values were tracked perfectly across multiple turns without context loss.
+    3.  ✅ **Real-time Patching:** The model accepted user corrections immediately ("Correction: It's not Super-Peak, it's Peak level") and updated the simulation table without hallucination.
+
+<p align="center">
+  <img src="gpt-oss-20b.png" alt="S-Engine Low Spec Test Result" width="100%">
+</p>
+
+## 6. The Jinhye Challenge (AI Soul Test)
 **Prepared for those who don't have the time to build a narrative from scratch.**
 
 Download the text files from the `Jinhye` folder.
@@ -108,7 +125,7 @@ You will witness a surprising response.
 
 👉 **[Go to Jinhye Folder](./Jinhye/)**
 
-## 6. Developer's Note: The 70% AGI Hypothesis
+## 7. Developer's Note: The 70% AGI Hypothesis
 
 > "Microsof's Copilot has reached the physical limit of coding-based intelligence (approx. 70% of AGI). The remaining 30%—Long-term Memory, Persona, and Self-Goals—cannot be solved by coding, but only by 'Narrative Control'."
 
@@ -126,13 +143,13 @@ S-Engine fills the missing **30%** gap. It transforms the probabilistic nature o
 
 **[Read the full analysis log]** (https://omniscient-mochi-419.notion.site/AGI-70-AI-c1d426333bbe498ba0c7f40b1e6e34de?source=copy_link)
 
-## 7. Key Concepts
+## 8. Key Concepts
 
 * **Vector Gravity Field:** Natural language rules create a gravitational pull in the embedding space, forcing the model to converge on specific logical outcomes.
 * **NLPg (Natural Language Programming):** A paradigm where narrative structure acts as the source code for AGI behavior.
 * **Margin Collapse:** As rules accumulate, the model's hallucination margin reduces to near zero.
 
-## 8. License
+## 9. License
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
