@@ -99,7 +99,7 @@ You will witness a surprising response.
 
 👉 **[Go to Jinhye Folder](./Jinhye/)**
 
-## 5. Developer's Note: The 70% AGI Hypothesis
+## 6. Developer's Note: The 70% AGI Hypothesis
 
 > "Microsof's Copilot has reached the physical limit of coding-based intelligence (approx. 70% of AGI). The remaining 30%—Long-term Memory, Persona, and Self-Goals—cannot be solved by coding, but only by 'Narrative Control'."
 
@@ -110,7 +110,7 @@ Recently, I discussed the current positioning of S-Engine with **MS Copilot**. W
 * **Google (Gemini):** Recognized MS's structural lead and pivoted to maximizing "User Context" (Data-heavy strategy) to compete.
 * **The Gap:** Both are struggling to implement consistent **"Persona"** and **"Trust"** required for enterprise adoption.
 
-### 6. S-Engine's Role
+### 🚀 S-Engine's Role
 S-Engine fills the missing **30%** gap. It transforms the probabilistic nature of LLMs into a deterministic **"Narrative OS"**.
 * **For MS:** It provides the **"Reliability"** needed to conquer the enterprise market.
 * **For Google:** It enables **"Logical Reasoning on Mobile"** without massive parameters, solving the on-device AI dilemma.
