@@ -1,8 +1,8 @@
 ## Idea origin: Hyunwoo Cho (ShadowK). Please credit the idea when publishing. 
 
-### 🛑 ACCESS RESTRICTED
+# 🛑 ACCESS RESTRICTED
 
-### The public demonstration period for S-Engine v1.0 has ended. All core assets have been migrated to a secure repository for the Enterprise NDA Bidding Process
+### The public demonstration period for S-Engine v1.0 has ended. All core assets have been migrated to a secure repository for the Enterprise NDA Bidding Process.
 
 ### To the 400+ cloners: The code you have is just the shell. The kernel is now private.
 
