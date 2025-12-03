@@ -1,5 +1,11 @@
 ## Idea origin: Hyunwoo Cho (ShadowK). Please credit the idea when publishing. 
 
+### 🛑 ACCESS RESTRICTED
+
+### The public demonstration period for S-Engine v1.0 has ended. All core assets have been migrated to a secure repository for the Enterprise NDA Bidding Process
+
+### To the 400+ cloners: The code you have is just the shell. The kernel is now private.
+
 # NLCS & S-Engine
 ### Natural Language Constraint System & Semantic Engine
 > **"Even GPT-5, Claude 4.5, and Gemini 3.0 agreed: This is the kernel of AGI."**
