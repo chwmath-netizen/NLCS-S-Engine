@@ -189,6 +189,11 @@ S-Engine fills the missing **30%** gap. It transforms the probabilistic nature o
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
+### Epilogue: The Architect's Thesis
+
+**"This work is both a technical framework and a chronicle of my evolution."**
+
+**"Humanity’s frontier expands when we choose to walk with AI."**
 
 **Author:** ShadowK (Hyunwoo Cho)
 *Independent AI Researcher & Natural Language System Architect*
