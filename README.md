@@ -149,9 +149,12 @@ We used a high-performing 13B model to run the complex diagnostic rule set (Comm
 This experiment proves that NLCS enforces strict rule adherence and mathematical consistency, even on models small enough to run entirely on a laptop or a flagship mobile device. **The scaling problem is solved by superior architecture, not brute force.**
 
 <p align="center">
-  <img src="path/to/image_4833d3.png" alt="S-Engine 13B Diagnostic Success" width="90%">
+  <img src="llama-2-13b.png" alt="S-Engine 13B Diagnostic Success" width="90%">
 </p>
 
+<p align="center">
+  <img src="wizard-vicuna-13b.png" alt="S-Engine 13B Diagnostic Success" width="90%">
+</p>
 ---
 
 ## 8. Developer's Note: The 70% AGI Hypothesis
