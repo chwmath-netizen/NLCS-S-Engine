@@ -166,6 +166,17 @@ This experiment proves that NLCS enforces strict rule adherence and mathematical
   <img src="wizard-vicuna-13b.png" alt="S-Engine 13B Diagnostic Success" width="90%">
 </p>
 ---
+#### 🔎 2. Validation on 8B (qwen3-v1-8b)
+
+We pushed the limit further to define the **Minimum Logic Specification** and successfully deployed the core on a lightweight 8B model.
+
+* ✅ **Minimum Spec Confirmation:** **Success on 8B.** The NLCS kernel functions reliably even at the 8B parameter threshold, maximizing cost-efficiency and portability.
+* ✅ **Success on Critical Constraint:** Even with reduced parameters, the model strictly adhered to the **OUTPUT PROTOCOL**.
+    * Input: `[SYMPTOMS: Sharp Facial Pain, Productive Cough, Sore Throat, Body Aches, Fever]`
+    * Output: **`[Consult Attending Physician]`**
+    * *(The 8B model successfully filtered the 'Sharp Facial Pain' constraint against the general symptoms, proving that logic structure can overcome model size limitations.)*
+
+![8B Proof](qwen3-v1-8b.png)
 
 ## 8. Developer's Note: The 70% AGI Hypothesis
 
