@@ -50,7 +50,7 @@ Optizm™ (Philosophy)
 └── S-Engine (Result)
     Semantic Engine
     = The working implementation of NLCS
-
+---
 
 ### Brand Concept
 
