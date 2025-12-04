@@ -138,6 +138,8 @@ We verified that S-Engine functions correctly even on **low-spec/quantized local
 ---
 ### 7. 🎯 🎯 The Final Thesis: Logic Superiority Verification (8B & 13B)
 
+**7B models fail to run the system; the S-Engine activates reliably from 8B and above.**
+
 **This section validates the core philosophy of NLCS: Logic Structure (Software) is superior to Model Size (Hardware).**
 
 The experiment successfully deployed the S-Engine Diagnostic Core on a common 13B parameter model, proving the feasibility of **On-Device AGI** for critical applications.
