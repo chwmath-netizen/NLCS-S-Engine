@@ -38,7 +38,7 @@ No fine-tuning. No retraining. One file. All models.
 It represents the transition from mechanical **Optimization** to natural **Optizm**.
 
 ### Brand Architecture
-
+```text
 Optizm™ (Philosophy)
 │
 │  "Optimization is complex. Optizm is natural."
@@ -48,9 +48,8 @@ Optizm™ (Philosophy)
 │   = The principle of aligning LLMs through natural language
 │
 └── S-Engine (Result)
-
-Semantic Engine
-= The working implementation of NLCS
+    Semantic Engine
+    = The working implementation of NLCS
 
 
 ### Brand Concept
