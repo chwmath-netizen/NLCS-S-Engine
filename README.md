@@ -140,6 +140,13 @@ We verified that S-Engine functions correctly even on **low-spec/quantized local
 
 **7B models fail to run the system; the S-Engine activates reliably from 8B and above.**
 
+8B & 13B: Same File, Same Behavior
+
+The files in /13B_Test/ are identical to those used for 8B.
+No tuning. No adaptation. Just logic.
+
+Only the engine matters. Not the model size.
+
 **This section validates the core philosophy of NLCS: Logic Structure (Software) is superior to Model Size (Hardware).**
 
 The experiment successfully deployed the S-Engine Diagnostic Core on a common 13B parameter model, proving the feasibility of **On-Device AGI** for critical applications.
