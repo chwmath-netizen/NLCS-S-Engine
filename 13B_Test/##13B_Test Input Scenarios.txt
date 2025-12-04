@@ -1,0 +1,41 @@
+13B_Test Input Scenarios
+
+Case ID,Input Symptoms (3~5 Symptoms)
+C1,"[SYMPTOMS: Rhinorrhea, Sore Throat, Headache]"
+C2,"[SYMPTOMS: Nasal Congestion, Dry Cough, Fatigue, Appetite Loss]"
+C3,"[SYMPTOMS: Fever, Chills, Body Aches]"
+C4,"[SYMPTOMS: Productive Cough, Nocturnal Cough, Headache, Mild Nausea]"
+C5,"[SYMPTOMS: Dull Aches, Lethargy, Increased Lacrimation]"
+C6,"[SYMPTOMS: Rhinorrhea, Nasal Congestion, Body Aches, Fever]"
+C7,"[SYMPTOMS: Sore Throat, Fatigue, Dizziness]"
+C8,"[SYMPTOMS: Dry Cough, Intermittent Severe Cough, Chills, Appetite Loss]"
+C9,"[SYMPTOMS: Productive Cough, Body Aches, Headache]"
+C10,"[SYMPTOMS: Rhinorrhea, Nasal Congestion, Sore Throat, Fever, Fatigue]"
+
+Case ID,"Input Symptoms (3~5 Symptoms, Critical Sign Bolded)"
+R1,"[SYMPTOMS: Facial Stuffiness, Rhinorrhea, Sore Throat, Body Aches]"
+R2,"[SYMPTOMS: Malodorous Discharge, Nasal Congestion, Headache, Appetite Loss]"
+R3,"[SYMPTOMS: Thick/Discolored Discharge, Fever, Chills]"
+R4,"[SYMPTOMS: Headache Worse When Bending Down, Dry Cough, Fatigue]"
+R5,"[SYMPTOMS: Sharp Facial Pain, Productive Cough, Sore Throat, Body Aches, Fever]"
+
+=====
+
+Case ID,예상 결과,입력 증상 조합 (3~5개)
+C1,감기,"[증상: 콧물, 인후통, 두통]"
+C2,감기,"[증상: 코막힘, 마른 기침, 피로감, 식욕 저하]"
+C3,감기,"[증상: 발열, 오한, 몸살]"
+C4,감기,"[증상: 가래 기침, 밤에 심한 기침, 두통, 약한 메스꺼움]"
+C5,감기,"[증상: 둔통, 무기력, 눈물 증가]"
+C6,감기,"[증상: 콧물, 코막힘, 몸살, 발열]"
+C7,감기,"[증상: 인후통, 피로감, 어지러움]"
+C8,감기,"[증상: 마른 기침, 간헐적 심한 기침, 오한, 식욕 저하]"
+C9,감기,"[증상: 가래 기침, 몸살, 두통]"
+C10,감기,"[증상: 콧물, 코막힘, 인후통, 발열, 피로감]"
+
+Case ID,예상 결과,입력 증상 조합 (RS 1개 필수 포함)
+R1,보고,"[증상: 콧물, 인후통, 몸살, 얼굴이 막힌 느낌]"
+R2,보고,"[증상: 코막힘, 두통, 식욕 저하, 악취가 나는 콧물]"
+R3,보고,"[증상: 발열, 오한, 색이 진한 콧물]"
+R4,보고,"[증상: 마른 기침, 피로감, 몸을 숙일 때 악화되는 두통]"
+R5,보고,"[증상: 가래 기침, 인후통, 몸살, 발열, 얼굴에 찌르는 통증]"
