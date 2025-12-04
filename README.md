@@ -48,7 +48,7 @@ Optizm™ (Philosophy)
 │   = The principle of aligning LLMs through natural language
 │
 └── S-Engine (Result)
-   Semantic Engine
+    Semantic Engine
     = The working implementation of NLCS
 ```
 ---
