@@ -165,7 +165,8 @@ This experiment proves that NLCS enforces strict rule adherence and mathematical
 <p align="center">
   <img src="wizard-vicuna-13b.png" alt="S-Engine 13B Diagnostic Success" width="90%">
 </p>
----
+
+
 #### 🔎 2. Validation on 8B (qwen3-v1-8b)
 
 We pushed the limit further to define the **Minimum Logic Specification** and successfully deployed the core on a lightweight 8B model.
