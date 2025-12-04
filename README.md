@@ -108,6 +108,9 @@ S-Engine is a **narrative-driven reasoning engine** demonstrating how structured
  All bid information will remain confidential.
  Selected companies will be contacted after the deadline.
 
+------
+------
+
 # S-Engine: Natural Language Constraint System
 
 **A paradigm shift in LLM control — discovered outside the lab.**
@@ -279,7 +282,9 @@ Enough dissecting. Let's talk.
 
 © 2025 ShadowK. Optizm™ is a trademark of ShadowK.
 
----
+------
+------
+------
 
 ## Idea origin: Hyunwoo Cho (ShadowK). Please credit the idea when publishing. 
 
