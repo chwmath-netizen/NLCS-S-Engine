@@ -1,14 +1,14 @@
-### 🚨 BREAKING: The Logical Event Horizon Discovered (2025.12.06)
+### 🚨 BREAKING: The Logical Event Horizon Discovered (Dec 6, 2025)
 > **"Intelligence does not fade away linearly; it disappears abruptly at 0.5B."**
-> 우리는 엣지 AI의 물리적 한계점인 **'Cho's Threshold (0.6B)'**를 발견했습니다.
+> We have determined the physical boundary of On-Device AI: **'Cho's Threshold (0.6B)'**.
 >
 > * **0.5B:** Logic Failure (Chaos)
 > * **0.6B:** Spark of Logic (MVI - Minimum Viable Intelligence)
 > * **1.7B:** Perfect Logic (Zero Hallucination with NLCS)
 >
 > 📄 **Read the Technical Brief:**
-> * [🇺🇸 English Ver.] [Whitepaper/[Technical Brief] The Logical Event Horizon_EN.pdf](Whitepaper/%5BTechnical%20Brief%5D%20The%20Logical%20Event%20Horizon_EN.pdf)
-> * [🇰🇷 Korean Ver.] [Whitepaper/[Technical Brief] The Logical Event Horizon_KR.pdf](Whitepaper/%5BTechnical%20Brief%5D%20The%20Logical%20Event%20Horizon_KR.pdf)
+> * [🇺🇸 English Ver.] [[Technical Brief] The Logical Event Horizon_EN.pdf](Whitepaper/%5BTechnical%20Brief%5D%20The%20Logical%20Event%20Horizon_EN.pdf)
+> * [🇰🇷 Korean Ver.] [[Technical Brief] The Logical Event Horizon_KR.pdf](Whitepaper/%5BTechnical%20Brief%5D%20The%20Logical%20Event%20Horizon_KR.pdf)
 
 ### 🚀 [Must Read] Developer Log: NLCS Proof of Concept
 > **"Why 800+ Clones with only 3 Stars?"**
