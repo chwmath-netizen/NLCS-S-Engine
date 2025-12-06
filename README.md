@@ -1,3 +1,11 @@
+### 🛑 Project Status: PAUSED due to Hardware Limitations
+> ... (생략) ...
+>
+> 📉 **Read the Developer Log:**
+> * [Wiki: The Wall of Hardware](https://github.com/chwmath-netizen/NLCS-S-Engine/wiki/...)
+
+---
+
 ### 🚨 BREAKING: The Logical Event Horizon Discovered (Dec 6, 2025)
 > **"Intelligence does not fade away linearly; it disappears abruptly at 0.5B."**
 > We have determined the physical boundary of On-Device AI: **'Cho's Threshold (0.6B)'**.
