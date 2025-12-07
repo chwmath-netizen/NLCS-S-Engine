@@ -22,7 +22,7 @@ The true engine logic is written in "Narrative", and it is not in this code.
 The real deal begins on December 12th.
 (진짜 게임은 12월 12일에 시작됩니다.)
 
-Author: ShadowK | Natural Language System Architect#
+Author: ShadowK | Natural Language System Architect
 
 -----
 
