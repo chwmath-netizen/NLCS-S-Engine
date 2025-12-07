@@ -117,6 +117,8 @@ S-Engine is a **narrative-driven reasoning engine** demonstrating how structured
  All bid information will remain confidential.
  Selected companies will be contacted after the deadline.
 
+------
+
 # NLCS & S-Engine™
 ⏳ Final Countdown: Repository Closing on Dec 12
 (카운트다운: 12월 12일 리포지토리 비공개 전환)
