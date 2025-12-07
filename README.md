@@ -23,9 +23,10 @@ The real deal begins on December 12th.
 (진짜 게임은 12월 12일에 시작됩니다.)
 
 Author: ShadowK | Natural Language System Architect#
-# S-Engine Global Partnership Proposal Summary
 
 -----
+
+# S-Engine Global Partnership Proposal Summary
 
 ## 1. To Anthropic: "The Engine for Safe Creativity"
 
