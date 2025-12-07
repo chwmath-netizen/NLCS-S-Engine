@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S-Engine 戰鬪 試演器 v7.2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+      color: #e0e0e0;
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      padding: 10px 8px;
+      font-size: 12px;
+    }
+    
+    .container { max-width: 1700px; margin: 0 auto; }
+    
+    header { text-align: center; margin-bottom: 10px; }
+    
+    h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #ffd700 0%, #ff6b35 50%, #ffd700 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle { color: #888; font-size: 0.7rem; }
+    
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+    
+    @media (max-width: 1500px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .team { flex-direction: row !important; flex-wrap: wrap; justify-content: center; }
+      .char-card { width: 280px; }
+    }
+    
+    /* 팀 영역 */
+    .team {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .team-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+    
+    .team-header.ally { background: rgba(231,76,60,0.12); border: 1px solid rgba(231,76,60,0.25); }
+    .team-header.enemy { background: rgba(52,152,219,0.12); border: 1px solid rgba(52,152,219,0.25); }
+    
+    .team-header h2 { font-family: 'Noto Serif KR', serif; font-size: 0.95rem; }
+    .team-header.ally h2 { color: #e74c3c; }
+    .team-header.enemy h2 { color: #3498db; }
+    
+    .btn-add {
+      padding: 3px 10px;
+      font-size: 0.7rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      color: #aaa;
+      cursor: pointer;
+    }
+    .btn-add:hover { background: rgba(255,255,255,0.15); }
+    .btn-add:disabled { opacity: 0.3; cursor: not-allowed; }
+    
+    /* 캐릭터 카드 */
+    .char-card {
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      padding: 8px;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .char-card.ally { border-left: 3px solid rgba(231,76,60,0.5); }
+    .char-card.enemy { border-left: 3px solid rgba(52,152,219,0.5); }
+    .char-card.dead { opacity: 0.35; filter: grayscale(0.7); }
+    .char-card.active { box-shadow: 0 0 12px rgba(255,215,0,0.4); }
+    
+    .btn-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      font-size: 11px;
+      line-height: 14px;
+      background: rgba(255,0,0,0.15);
+      border: 1px solid rgba(255,0,0,0.25);
+      border-radius: 50%;
+      color: #e74c3c;
+      cursor: pointer;
+    }
+    
+    .char-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    
+    .char-header input {
+      flex: 1;
+      padding: 3px 6px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    
+    .char-status {
+      font-size: 0.6rem;
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+    
+    .char-status.alive { background: rgba(46,204,113,0.2); color: #2ecc71; }
+    .char-status.dead { background: rgba(231,76,60,0.2); color: #e74c3c; }
+    
+    /* 설정 그리드 */
+    .config-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-bottom: 5px;
+    }
+    
+    .config-row.three-col { grid-template-columns: repeat(3, 1fr); }
+    
+    .config-item label {
+      display: block;
+      font-size: 0.55rem;
+      color: #777;
+      margin-bottom: 1px;
+    }
+    
+    .config-item select {
+      width: 100%;
+      padding: 2px 3px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      color: #fff;
+      font-size: 0.65rem;
+    }
+    
+    /* 운기 게이지 */
+    .ungi-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 5px;
+    }
+    
+    .ungi-label { font-size: 0.65rem; color: #ffd700; min-width: 22px; }
+    
+    .ungi-bar-wrap {
+      flex: 1;
+      position: relative;
+      height: 12px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    
+    .ungi-bar {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.05s linear;
+    }
+    
+    .ungi-bar.ally { background: linear-gradient(90deg, #c0392b, #e74c3c, #f39c12); }
+    .ungi-bar.enemy { background: linear-gradient(90deg, #2980b9, #3498db, #1abc9c); }
+    .ungi-bar.ready { box-shadow: 0 0 8px rgba(46,204,113,0.7); }
+    
+    .ungi-threshold {
+      position: absolute;
+      left: 80%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: #2ecc71;
+    }
+    
+    .ungi-value {
+      font-size: 0.65rem;
+      font-weight: bold;
+      min-width: 32px;
+      text-align: right;
+    }
+    
+    .ungi-value.ready { color: #2ecc71; }
+    .ungi-value.charging { color: #f39c12; }
+    
+    /* 스탯 바 */
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 5px;
+    }
+    
+    .stat-item {
+      background: rgba(0,0,0,0.2);
+      border-radius: 3px;
+      padding: 3px 5px;
+    }
+    
+    .stat-item .label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.55rem;
+      margin-bottom: 2px;
+    }
+    
+    .stat-item .track {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .stat-item .fill { height: 100%; }
+    .stat-item .fill.hp { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+    .stat-item .fill.ng { background: linear-gradient(90deg, #2980b9, #3498db); }
+    
+    /* 물약 */
+    .potion-row {
+      display: flex;
+      gap: 8px;
+      font-size: 0.6rem;
+      margin-bottom: 4px;
+    }
+    
+    .potion-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .potion-count {
+      padding: 1px 4px;
+      background: rgba(46,204,113,0.2);
+      border-radius: 2px;
+      color: #2ecc71;
+      min-width: 14px;
+      text-align: center;
+    }
+    
+    .potion-count.empty { background: rgba(231,76,60,0.2); color: #e74c3c; }
+    
+    .potion-input {
+      width: 30px;
+      padding: 1px 2px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      color: #fff;
+      font-size: 0.6rem;
+    }
+    
+    /* 현재 동작 */
+    .action-row {
+      padding: 4px;
+      background: rgba(155,89,182,0.1);
+      border-radius: 3px;
+      font-size: 0.6rem;
+      text-align: center;
+      min-height: 18px;
+    }
+    
+    .action-row.attack { color: #e74c3c; font-weight: bold; }
+    .action-row.defend { color: #3498db; }
+    .action-row.move { color: #f39c12; }
+    .action-row.potion { color: #2ecc71; }
+    
+    /* 중앙 전투 영역 */
+    .battle-area { display: flex; flex-direction: column; gap: 8px; }
+    
+    .battle-controls {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover { transform: scale(1.03); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .btn-start { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; }
+    .btn-stop { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; }
+    .btn-reset { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #aaa; }
+    
+    .options-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .option-box {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      font-size: 0.65rem;
+    }
+    
+    .option-box label { color: #888; }
+    .option-box select {
+      padding: 2px 4px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px;
+      color: #fff;
+      font-size: 0.65rem;
+    }
+    
+    /* 전투 로그 */
+    .battle-log-container {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      height: 420px;
+    }
+    
+    .log-header {
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .log-header h3 {
+      color: #ffd700;
+      font-family: 'Noto Serif KR', serif;
+      font-size: 0.85rem;
+    }
+    
+    .log-stats {
+      display: flex;
+      gap: 6px;
+      font-size: 0.6rem;
+    }
+    
+    .log-stats span { padding: 2px 5px; border-radius: 3px; }
+    .log-stats .time { background: rgba(155,89,182,0.2); color: #9b59b6; }
+    .log-stats .round { background: rgba(255,215,0,0.2); color: #ffd700; }
+    .log-stats .potion { background: rgba(46,204,113,0.2); color: #2ecc71; }
+    
+    .log-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      font-family: 'D2Coding', monospace;
+      font-size: 0.65rem;
+      line-height: 1.4;
+    }
+    
+    .log-line { margin-bottom: 1px; color: #bbb; }
+    .log-line.move { color: #f39c12; }
+    .log-line.stun { color: #e67e22; font-style: italic; }
+    .log-line.attack { color: #e74c3c; font-weight: bold; }
+    .log-line.defend { color: #3498db; }
+    .log-line.damage { color: #ff6b6b; }
+    .log-line.naesang { color: #9b59b6; font-style: italic; }
+    .log-line.combo { color: #ffd700; }
+    .log-line.ready { color: #2ecc71; font-weight: bold; }
+    .log-line.info { color: #888; font-style: italic; }
+    .log-line.potion { color: #2ecc71; }
+    .log-line.critical { color: #e74c3c; font-weight: bold; background: rgba(231,76,60,0.1); padding: 1px 3px; border-radius: 2px; }
+    .log-line.divider { color: #555; text-align: center; }
+    .log-line.mugong { color: #9b59b6; font-weight: bold; }
+    
+    .battle-result {
+      padding: 8px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    
+    .result-text {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1rem;
+      color: #ffd700;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 10px;
+      color: #555;
+      font-size: 0.6rem;
+    }
+    
+    .highlight-red { color: #e74c3c; }
+    .highlight-blue { color: #3498db; }
+    .highlight-gold { color: #ffd700; }
+    .highlight-green { color: #2ecc71; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>S-Engine 戰鬪 試演器</h1>
+      <p class="subtitle">v7.2 - 심법 공속 패널티 적용 (전투 시작 시 -3%/단계)</p>
+    </header>
+    
+    <div class="main-layout">
+      <!-- 아군 팀 -->
+      <div class="team" id="ally-team">
+        <div class="team-header ally">
+          <h2>⚔️ 아군</h2>
+          <button class="btn-add" id="ally-add-btn" onclick="addCharacter('ally')">+ 추가</button>
+        </div>
+        <div id="ally-chars"></div>
+      </div>
+      
+      <!-- 중앙 전투 영역 -->
+      <div class="battle-area">
+        <div class="battle-controls">
+          <button class="btn btn-start" id="btn-start" onclick="startBattle()">▶️ 전투 시작</button>
+          <button class="btn btn-stop" id="btn-stop" onclick="stopBattle()" style="display:none;">⏹️ 중지</button>
+          <button class="btn btn-reset" onclick="resetBattle()">↺ 초기화</button>
+        </div>
+        
+        <div class="options-row">
+          <div class="option-box">
+            <label>⏱️ 속도</label>
+            <select id="sim-speed">
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="2">2x</option>
+              <option value="5">5x</option>
+            </select>
+          </div>
+          <div class="option-box">
+            <label>🕐 전투스케일</label>
+            <select id="battle-scale">
+              <option value="1">1x (빠름)</option>
+              <option value="2">2x</option>
+              <option value="3" selected>3x (기본)</option>
+              <option value="5">5x</option>
+              <option value="10">10x (느림)</option>
+            </select>
+          </div>
+          <div class="option-box">
+            <label>🎯 타겟</label>
+            <select id="targeting-mode">
+              <option value="weakest">약한적</option>
+              <option value="strongest">강한적</option>
+              <option value="random">무작위</option>
+            </select>
+          </div>
+          <div class="option-box">
+            <label>⚔️ 무공대응</label>
+            <select id="mugong-response">
+              <option value="max">최고</option>
+              <option value="match" selected>대응</option>
+              <option value="save">절약</option>
+            </select>
+          </div>
+          <div class="option-box">
+            <label>💊 회복량</label>
+            <select id="potion-heal">
+              <option value="10">10%</option>
+              <option value="15" selected>15%</option>
+              <option value="20">20%</option>
+            </select>
+          </div>
+          <div class="option-box">
+            <label>❤️ 체력기준</label>
+            <select id="hp-threshold">
+              <option value="60">60%</option>
+              <option value="70">70%</option>
+              <option value="75" selected>75%</option>
+              <option value="80">80%</option>
+            </select>
+          </div>
+          <div class="option-box">
+            <label>💙 내공기준</label>
+            <select id="ng-threshold">
+              <option value="60">60%</option>
+              <option value="70">70%</option>
+              <option value="75" selected>75%</option>
+              <option value="80">80%</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 배율 설정 -->
+        <div class="multiplier-settings" style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+          <div class="option-box" style="flex: 1; min-width: 80px;">
+            <label>💙 내공</label>
+            <select id="mult-neigong">
+              <option value="50">50배</option>
+              <option value="100" selected>100배</option>
+              <option value="150">150배</option>
+              <option value="200">200배</option>
+            </select>
+          </div>
+          <div class="option-box" style="flex: 1; min-width: 80px;">
+            <label>❤️ 체력</label>
+            <select id="mult-hp">
+              <option value="30">30배</option>
+              <option value="50" selected>50배</option>
+              <option value="70">70배</option>
+              <option value="100">100배</option>
+            </select>
+          </div>
+          <div class="option-box" style="flex: 1; min-width: 80px;">
+            <label>⚔️ 무공</label>
+            <select id="mult-skill">
+              <option value="10">10배</option>
+              <option value="20">20배</option>
+              <option value="30" selected>30배</option>
+              <option value="50">50배</option>
+            </select>
+          </div>
+          <div class="option-box" style="flex: 1; min-width: 100px;">
+            <label>💥 피해분배</label>
+            <select id="damage-split">
+              <option value="90-10" selected>내공90/체력10</option>
+              <option value="80-20">내공80/체력20</option>
+              <option value="70-30">내공70/체력30</option>
+              <option value="50-50">내공50/체력50</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="battle-log-container">
+          <div class="log-header">
+            <h3>📜 전투 기록</h3>
+            <div class="log-stats">
+              <span class="time">⏱️ <span id="battle-time">0.0</span>s</span>
+              <span class="round">💥 <span id="attack-count">0</span>합</span>
+              <span class="potion">💊 <span id="potion-used">0</span></span>
+            </div>
+          </div>
+          <div class="log-content" id="log-content">
+            <div class="log-line info">양 팀에 캐릭터를 배치하고 전투를 시작하세요.</div>
+            <div class="log-line info">최대 3 vs 3 전투가 가능합니다.</div>
+          </div>
+          <div class="battle-result" id="battle-result" style="display: none;">
+            <div class="result-text" id="result-text"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 적군 팀 -->
+      <div class="team" id="enemy-team">
+        <div class="team-header enemy">
+          <h2>🛡️ 적군</h2>
+          <button class="btn-add" id="enemy-add-btn" onclick="addCharacter('enemy')">+ 추가</button>
+        </div>
+        <div id="enemy-chars"></div>
+      </div>
+    </div>
+    
+    <footer>
+      S-Engine Combat Simulator v6.2 最終完成版 by ShadowK | 10일간의 여정, 완성!
+    </footer>
+  </div>
+  
+  <script>
+    // ===== 데이터 =====
+    const GYEONGJI = {
+      '삼류': { level: 1, speed: Math.sqrt(1), neigong: 5 },      // 5년
+      '이류': { level: 2, speed: Math.sqrt(2), neigong: 10 },     // 10년
+      '일류': { level: 3, speed: Math.sqrt(3), neigong: 30 },     // 30년
+      '절정': { level: 4, speed: Math.sqrt(4), neigong: 60 },     // 60년 (일갑자)
+      '초절정': { level: 5, speed: Math.sqrt(5), neigong: 120 },  // 120년 (이갑자)
+      '화경': { level: 6, speed: Math.sqrt(6), neigong: 180 },    // 180년 (삼갑자)
+      '현경': { level: 7, speed: Math.sqrt(7), neigong: 240 },    // 240년 (사갑자)
+      '생사경': { level: 8, speed: Math.sqrt(8), neigong: 300 },  // 300년
+      '자연경': { level: 9, speed: Math.sqrt(9), neigong: 360 }   // 360년
+    };
+    
+    const SIMBEOP = {
+      '삼재심법': { chukgi: 10, stab: 90, type: '기본', tier: 0 },
+      '기초심법': { chukgi: 20, stab: 80, type: '기초', tier: 1 },
+      '기본심법': { chukgi: 30, stab: 70, type: '기본', tier: 2 },
+      '심화심법': { chukgi: 40, stab: 70, type: '심화', tier: 3 },
+      '비전심법': { chukgi: 70, stab: 60, type: '비전', tier: 4 },
+      '명운심법': { chukgi: 110, stab: 80, type: '신공Lv1', tier: 5 },
+      '천마심공': { chukgi: 130, stab: 70, type: '신공Lv2', tier: 5 },
+      '달마심공': { chukgi: 120, stab: 80, type: '신공Lv2', tier: 5 }
+    };
+    
+    const THRESHOLD = { '기초': 40, '기본': 40, '심화': 40, '비전': 35, '신공Lv1': 30, '신공Lv2': 25 };
+    
+    const MUGONG = {
+      '검기': { 1: [2,1], 2: [4,1], 3: [6,1], 4: [8,1], 5: [10,1] },
+      '검사': { 1: [6,2], 2: [9,2], 3: [12,2], 4: [15,2], 5: [18,2] },
+      '검강': { 1: [15,3], 2: [19,3], 3: [23,3], 4: [28,3], 5: [33,3] }
+    };
+    
+    const BALCHUL = {
+      '없음': { bonus: 0, cost: 0 },
+      '검기발출': { bonus: 8, cost: 2 },
+      '검기즉시발출': { bonus: 12, cost: 3 },
+      '검강발출': { bonus: 18, cost: 4 },
+      '검강즉시발출': { bonus: 25, cost: 5 }
+    };
+    
+    // 경지별 습득 가능 무공/발출 제한
+    const MUGONG_LIMIT = {
+      '삼류':   { 검기: 1, 검사: 0, 검강: 0 },
+      '이류':   { 검기: 2, 검사: 1, 검강: 0 },
+      '일류':   { 검기: 3, 검사: 2, 검강: 0 },
+      '절정':   { 검기: 4, 검사: 3, 검강: 1 },
+      '초절정': { 검기: 5, 검사: 4, 검강: 2 },
+      '화경':   { 검기: 5, 검사: 5, 검강: 3 },
+      '현경':   { 검기: 5, 검사: 5, 검강: 4 },
+      '생사경': { 검기: 5, 검사: 5, 검강: 5 },
+      '자연경': { 검기: 5, 검사: 5, 검강: 5 }
+    };
+    
+    const BALCHUL_LIMIT = {
+      '삼류':   { '없음': true, '검기발출': false, '검기즉시발출': false, '검강발출': false, '검강즉시발출': false },
+      '이류':   { '없음': true, '검기발출': false, '검기즉시발출': false, '검강발출': false, '검강즉시발출': false },
+      '일류':   { '없음': true, '검기발출': 1, '검기즉시발출': false, '검강발출': false, '검강즉시발출': false },
+      '절정':   { '없음': true, '검기발출': 2, '검기즉시발출': 1, '검강발출': false, '검강즉시발출': false },
+      '초절정': { '없음': true, '검기발출': 3, '검기즉시발출': 3, '검강발출': 1, '검강즉시발출': false },
+      '화경':   { '없음': true, '검기발출': 5, '검기즉시발출': 4, '검강발출': 2, '검강즉시발출': 1 },
+      '현경':   { '없음': true, '검기발출': 5, '검기즉시발출': 5, '검강발출': 3, '검강즉시발출': 2 },
+      '생사경': { '없음': true, '검기발출': 5, '검기즉시발출': 5, '검강발출': 4, '검강즉시발출': 4 },
+      '자연경': { '없음': true, '검기발출': 5, '검기즉시발출': 5, '검강발출': 5, '검강즉시발출': 5 }
+    };
+    
+    // 무공/발출 선택 가능 여부 체크
+    function getAvailableMugong(gyeongji) {
+      const limit = MUGONG_LIMIT[gyeongji];
+      const result = [];
+      for (const [name, maxLv] of Object.entries(limit)) {
+        if (maxLv > 0) result.push({ name, maxLv });
+      }
+      return result;
+    }
+    
+    function getAvailableBalchul(gyeongji) {
+      const limit = BALCHUL_LIMIT[gyeongji];
+      const result = [];
+      for (const [name, maxLv] of Object.entries(limit)) {
+        if (maxLv !== false) result.push({ name, maxLv: maxLv === true ? 0 : maxLv });
+      }
+      return result;
+    }
+    
+    // 경지 변경 시 무공/발출 자동 조정
+    function adjustMugongForGyeongji(char) {
+      const mugongLimit = MUGONG_LIMIT[char.gyeongji];
+      const balchulLimit = BALCHUL_LIMIT[char.gyeongji];
+      
+      // 무공 조정
+      if (mugongLimit[char.mugong] === 0) {
+        // 현재 무공을 사용할 수 없으면, 가장 높은 사용 가능 무공으로 변경
+        if (mugongLimit['검강'] > 0) char.mugong = '검강';
+        else if (mugongLimit['검사'] > 0) char.mugong = '검사';
+        else char.mugong = '검기';
+      }
+      
+      // 무공 레벨 조정
+      const maxMugongLv = mugongLimit[char.mugong];
+      if (char.mugongLv > maxMugongLv) char.mugongLv = maxMugongLv;
+      if (char.mugongLv < 1 && maxMugongLv > 0) char.mugongLv = 1;
+      
+      // 발출 조정
+      if (balchulLimit[char.balchul] === false) {
+        char.balchul = '없음';
+        char.balchulLv = 1;
+      } else if (balchulLimit[char.balchul] !== true) {
+        const maxBalchulLv = balchulLimit[char.balchul];
+        if (char.balchulLv > maxBalchulLv) char.balchulLv = maxBalchulLv;
+        if (char.balchulLv < 1 && maxBalchulLv > 0) char.balchulLv = 1;
+      }
+    }
+    
+    const LEVEL_NAME = ['', '下', '中', '上下', '上中', '上上'];
+    const DIRECTIONS = ['전진', '전좌', '전우', '좌', '우', '후퇴', '후좌', '후우'];
+    const APPROACH_DIR = ['전진', '전좌', '전우'];
+    const RETREAT_DIR = ['후퇴', '후좌', '후우'];
+    
+    const ATTACK_TYPES = {
+      검기: ['검기를 실은 직선베기', '검기를 두른 횡베기', '검기 찌르기'],
+      검사: ['검사 섬광베기', '검사 회전참', '검사격'],
+      검강: ['검강 파천격', '검강일섬', '무형검강']
+    };
+    
+    const BALCHUL_DESC = {
+      '검기발출': '검기가 허공을 가른다!',
+      '검기즉시발출': '찰나의 검기 속사!',
+      '검강발출': '장대한 검강이 쏟아진다!',
+      '검강즉시발출': '일순간, 검강이 세계를 베었다!'
+    };
+    
+    const DEFEND_TYPES = ['검으로 흘려냄', '몸을 비틀어 회피', '보법으로 물러남', '검신으로 막아냄'];
+    const COMBO_BONUS = { 2: 0.05, 3: 0.10, 4: 0.15 };
+    
+    // ===== 상태 =====
+    let state = {
+      running: false,
+      time: 0,
+      attackCount: 0,
+      winner: null,
+      animFrame: null,
+      lastTime: 0,
+      totalPotionsUsed: 0,
+      chars: { ally: [], enemy: [] }
+    };
+    
+    let charIdCounter = 0;
+    
+    // ===== 캐릭터 생성 =====
+    function createCharacter(team, preset = {}) {
+      const id = ++charIdCounter;
+      const isAlly = team === 'ally';
+      const gyeongji = preset.gyeongji || (isAlly ? '절정' : '일류');
+      
+      // 경지에 맞는 기본 무공 결정
+      const mugongLimit = MUGONG_LIMIT[gyeongji];
+      let defaultMugong = '검기';
+      if (mugongLimit['검강'] > 0) defaultMugong = '검강';
+      else if (mugongLimit['검사'] > 0) defaultMugong = '검사';
+      
+      const balchulLimit = BALCHUL_LIMIT[gyeongji];
+      let defaultBalchul = '없음';
+      if (balchulLimit['검강발출']) defaultBalchul = '검강발출';
+      else if (balchulLimit['검기발출']) defaultBalchul = '검기발출';
+      
+      return {
+        id, team,
+        name: preset.name || (isAlly ? `아군${id}` : `적군${id}`),
+        gyeongji: gyeongji,
+        simbeop: preset.simbeop || (isAlly ? '기본심법' : '기초심법'),
+        bobeop: preset.bobeop ?? (isAlly ? 5 : 3),
+        mugong: preset.mugong || defaultMugong,
+        mugongLv: preset.mugongLv || Math.min(mugongLimit[preset.mugong || defaultMugong], 3) || 1,
+        balchul: preset.balchul || defaultBalchul,
+        balchulLv: preset.balchulLv || 1,
+        hp: 100, neigong: 100, ungi: 0,
+        cooldown: 0,  // 이격/경직 쿨다운
+        hpPotions: preset.hpPotions ?? (isAlly ? 5 : 3),
+        ngPotions: preset.ngPotions ?? (isAlly ? 5 : 3),
+        hpThreshold: 50, ngThreshold: 60,
+        currentAction: '대기 중',
+        comboCount: 0, lastTarget: null
+      };
+    }
+    
+    function addCharacter(team) {
+      if (state.chars[team].length >= 3 || state.running) return;
+      state.chars[team].push(createCharacter(team));
+      renderTeam(team);
+      updateAddButtons();
+    }
+    
+    function removeCharacter(team, id) {
+      if (state.running) return;
+      state.chars[team] = state.chars[team].filter(c => c.id !== id);
+      renderTeam(team);
+      updateAddButtons();
+    }
+    
+    function updateAddButtons() {
+      ['ally', 'enemy'].forEach(team => {
+        const btn = document.getElementById(`${team}-add-btn`);
+        btn.disabled = state.chars[team].length >= 3 || state.running;
+      });
+    }
+    
+    // ===== 계산 =====
+    function calcChar(char) {
+      const g = GYEONGJI[char.gyeongji];
+      const s = SIMBEOP[char.simbeop];
+      const m = MUGONG[char.mugong]?.[char.mugongLv] || [0, 0];
+      const b = BALCHUL[char.balchul] || { bonus: 0, cost: 0 };
+      
+      const atkTime = 3 / g.speed;
+      const battleScale = parseFloat(document.getElementById('battle-scale')?.value || 10);
+      const ungiPath = Math.sqrt(s.chukgi);
+      const danger = 1 / Math.sqrt(s.stab);
+      
+      // 운기 충전 속도 (심법 공속 패널티 적용)
+      const speedPenalty = char.speedPenalty || 0;
+      const ungiPerSec = (100 / (atkTime * battleScale)) * (1 + speedPenalty);
+      
+      // 파괴력 = √내공년수 × √축기속도 × 운기율
+      const power = Math.sqrt(g.neigong) * ungiPath * (char.ungi / 100);
+      
+      const bobeopBonus = char.bobeop * 0.1;
+      const moveSpeed = char.bobeop > 0 ? Math.sqrt(char.bobeop) : 1;
+      const mugongBonus = m[0] / 100;
+      const mugongCost = m[1];
+      const balchulBonus = (b.bonus * char.balchulLv / 5) / 100;
+      const balchulCost = b.cost;
+      
+      const threshold = THRESHOLD[s.type];
+      const isDead = char.neigong <= threshold || char.hp <= 0;
+      
+      return {
+        g, s, atkTime, ungiPath, danger, ungiPerSec, power,
+        bobeopBonus, moveSpeed, mugongBonus, mugongCost, balchulBonus, balchulCost,
+        threshold, isDead
+      };
+    }
+    
+    function randomPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    
+    // ===== 배율 설정 =====
+    function getMultipliers() {
+      return {
+        neigong: parseInt(document.getElementById('mult-neigong').value),
+        hp: parseInt(document.getElementById('mult-hp').value),
+        skill: parseInt(document.getElementById('mult-skill').value)
+      };
+    }
+    
+    function getDamageSplit() {
+      const split = document.getElementById('damage-split').value.split('-');
+      return {
+        ng: parseInt(split[0]) / 100,  // 내공 비율
+        hp: parseInt(split[1]) / 100   // 체력 비율
+      };
+    }
+    
+    // ===== 무공 대응 =====
+    function selectMugong(attacker, defender) {
+      const mode = document.getElementById('mugong-response').value;
+      const atkGyeongji = GYEONGJI[attacker.gyeongji].level;
+      const defGyeongji = GYEONGJI[defender.gyeongji].level;
+      
+      // 기본값: 설정된 최고 무공
+      let mugong = attacker.mugong;
+      let mugongLv = attacker.mugongLv;
+      let balchul = attacker.balchul;
+      let balchulLv = attacker.balchulLv;
+      
+      if (mode === 'max') {
+        // 최고: 항상 설정된 최고 무공
+        // 기본값 그대로
+      } else if (mode === 'match') {
+        // 대응: 상대 경지/무공에 맞춤
+        const levelDiff = atkGyeongji - defGyeongji;
+        
+        if (levelDiff >= 3) {
+          // 3단계 이상 차이 → 최하 무공
+          mugongLv = 1;
+          balchul = '없음';
+        } else if (levelDiff >= 2) {
+          // 2단계 차이 → 낮은 무공
+          mugongLv = Math.min(2, attacker.mugongLv);
+          balchul = '없음';
+        } else if (levelDiff >= 1) {
+          // 1단계 차이 → 중간 무공
+          mugongLv = Math.min(3, attacker.mugongLv);
+          balchul = '없음';
+        } else {
+          // 동급 이하 → 상대 무공+1 or 발출 사용
+          mugongLv = Math.min(attacker.mugongLv, defender.mugongLv + 1);
+          // 상대가 발출 가능하면 나도 발출
+          if (defender.balchul !== '없음') {
+            balchul = attacker.balchul;
+          } else {
+            balchul = Math.random() > 0.7 ? attacker.balchul : '없음';
+          }
+        }
+      } else if (mode === 'save') {
+        // 절약: 최소 무공
+        mugongLv = 1;
+        balchul = '없음';
+      }
+      
+      // 무공 데이터 계산
+      const m = MUGONG[mugong]?.[mugongLv] || [0, 0];
+      const b = BALCHUL[balchul] || { bonus: 0, cost: 0 };
+      
+      return {
+        mugong, mugongLv, balchul, balchulLv,
+        mugongBonus: m[0] / 100,
+        mugongCost: m[1],
+        balchulBonus: (b.bonus * balchulLv / 5) / 100,
+        balchulCost: b.cost
+      };
+    }
+    
+    // ===== 렌더링 =====
+    function renderTeam(team) {
+      const container = document.getElementById(`${team}-chars`);
+      const inBattle = state.running;
+      
+      container.innerHTML = state.chars[team].map(char => {
+        const c = calcChar(char);
+        const statusClass = c.isDead ? 'dead' : 'alive';
+        const statusText = c.isDead ? '전투불능' : '생존';
+        const cardClass = c.isDead ? 'dead' : '';
+        const ungiClass = char.ungi >= 80 ? 'ready' : 'charging';
+        
+        return `
+          <div class="char-card ${team} ${cardClass}" data-id="${char.id}">
+            ${!inBattle ? `<button class="btn-remove" onclick="removeCharacter('${team}', ${char.id})">×</button>` : ''}
+            
+            <div class="char-header">
+              <input type="text" value="${char.name}" onchange="updateCharField('${team}', ${char.id}, 'name', this.value)" ${inBattle ? 'disabled' : ''}>
+              <span class="char-status ${statusClass}">${statusText}</span>
+            </div>
+            
+            <div class="config-row">
+              <div class="config-item">
+                <label>경지</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'gyeongji', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${Object.keys(GYEONGJI).map(g => `<option value="${g}" ${char.gyeongji === g ? 'selected' : ''}>${g}</option>`).join('')}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>심법</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'simbeop', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${Object.keys(SIMBEOP).map(s => `<option value="${s}" ${char.simbeop === s ? 'selected' : ''}>${s.replace('심법','').replace('심공','')}</option>`).join('')}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>보법</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'bobeop', +this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${[0,1,2,3,4,5,6,7,8,9].map(b => `<option value="${b}" ${char.bobeop === b ? 'selected' : ''}>${b===0?'없음':'Lv'+b}</option>`).join('')}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>무공</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'mugong', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const limit = MUGONG_LIMIT[char.gyeongji];
+                    return Object.keys(MUGONG).filter(m => limit[m] > 0).map(m => 
+                      `<option value="${m}" ${char.mugong === m ? 'selected' : ''}>${m}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+            </div>
+            
+            <div class="config-row">
+              <div class="config-item">
+                <label>무공숙련</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'mugongLv', +this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const maxLv = MUGONG_LIMIT[char.gyeongji][char.mugong];
+                    return [1,2,3,4,5].filter(l => l <= maxLv).map(l => 
+                      `<option value="${l}" ${char.mugongLv === l ? 'selected' : ''}>${LEVEL_NAME[l]}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>발출기</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'balchul', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const limit = BALCHUL_LIMIT[char.gyeongji];
+                    return Object.keys(BALCHUL).filter(b => limit[b] !== false).map(b => 
+                      `<option value="${b}" ${char.balchul === b ? 'selected' : ''}>${b}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>발출숙련</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'balchulLv', +this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const limit = BALCHUL_LIMIT[char.gyeongji];
+                    const maxLv = limit[char.balchul];
+                    if (maxLv === true || maxLv === 0 || char.balchul === '없음') {
+                      return '<option value="1">-</option>';
+                    }
+                    return [1,2,3,4,5].filter(l => l <= maxLv).map(l => 
+                      `<option value="${l}" ${char.balchulLv === l ? 'selected' : ''}>${LEVEL_NAME[l]}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>파괴력</label>
+                <div style="font-size:0.7rem;color:#ffd700;padding-top:2px;">${c.power.toFixed(1)}</div>
+              </div>
+            </div>
+            
+            <div class="ungi-row">
+              <span class="ungi-label">🌀</span>
+              <div class="ungi-bar-wrap">
+                <div class="ungi-threshold"></div>
+                <div class="ungi-bar ${team} ${ungiClass}" style="width: ${Math.min(100, char.ungi)}%"></div>
+              </div>
+              <span class="ungi-value ${ungiClass}">${char.ungi.toFixed(0)}%</span>
+            </div>
+            
+            <div class="stat-row">
+              <div class="stat-item">
+                <div class="label"><span>HP</span><span class="highlight-red">${char.hp.toFixed(1)}</span></div>
+                <div class="track"><div class="fill hp" style="width:${Math.max(0,char.hp)}%"></div></div>
+              </div>
+              <div class="stat-item">
+                <div class="label"><span>내공</span><span class="highlight-blue">${char.neigong.toFixed(1)}</span></div>
+                <div class="track"><div class="fill ng" style="width:${Math.max(0,char.neigong)}%"></div></div>
+              </div>
+            </div>
+            
+            <div class="potion-row">
+              <div class="potion-item">
+                ❤️<span class="potion-count ${char.hpPotions===0?'empty':''}">${char.hpPotions}</span>
+                ${!inBattle ? `<input type="number" class="potion-input" value="${char.hpPotions}" min="0" max="99" onchange="updateCharField('${team}', ${char.id}, 'hpPotions', +this.value)">` : ''}
+              </div>
+              <div class="potion-item">
+                💙<span class="potion-count ${char.ngPotions===0?'empty':''}">${char.ngPotions}</span>
+                ${!inBattle ? `<input type="number" class="potion-input" value="${char.ngPotions}" min="0" max="99" onchange="updateCharField('${team}', ${char.id}, 'ngPotions', +this.value)">` : ''}
+              </div>
+            </div>
+            
+            <div class="action-row ${getActionClass(char.currentAction)}">${char.currentAction}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function getActionClass(action) {
+      if (action.includes('물약')) return 'potion';
+      if (action.includes('검') || action.includes('발출') || action.includes('베기')) return 'attack';
+      if (action.includes('방어') || action.includes('회피') || action.includes('막')) return 'defend';
+      return 'move';
+    }
+    
+    function updateCharField(team, id, field, value) {
+      const char = state.chars[team].find(c => c.id === id);
+      if (char) {
+        char[field] = value;
+        
+        // 경지 변경 시 무공/발출 자동 조정
+        if (field === 'gyeongji') {
+          adjustMugongForGyeongji(char);
+        }
+        // 무공 변경 시 레벨 조정
+        if (field === 'mugong') {
+          const maxLv = MUGONG_LIMIT[char.gyeongji][char.mugong];
+          if (char.mugongLv > maxLv) char.mugongLv = maxLv;
+          if (char.mugongLv < 1) char.mugongLv = 1;
+        }
+        // 발출 변경 시 레벨 조정
+        if (field === 'balchul') {
+          const limit = BALCHUL_LIMIT[char.gyeongji];
+          if (limit[char.balchul] !== true && limit[char.balchul] > 0) {
+            if (char.balchulLv > limit[char.balchul]) char.balchulLv = limit[char.balchul];
+            if (char.balchulLv < 1) char.balchulLv = 1;
+          }
+        }
+        
+        renderTeam(team);
+      }
+    }
+    
+    function renderAll() {
+      renderTeam('ally');
+      renderTeam('enemy');
+      document.getElementById('battle-time').textContent = state.time.toFixed(1);
+      document.getElementById('attack-count').textContent = state.attackCount;
+      document.getElementById('potion-used').textContent = state.totalPotionsUsed;
+    }
+    
+    // ===== 로그 =====
+    function addLog(text, cls = '') {
+      const el = document.getElementById('log-content');
+      const line = document.createElement('div');
+      line.className = `log-line ${cls}`;
+      line.textContent = text;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+    
+    function addLogTime(text, cls = '') {
+      addLog(`[${state.time.toFixed(2)}s] ${text}`, cls);
+    }
+    
+    // ===== 타겟팅 =====
+    function getAliveChars(team) {
+      return state.chars[team].filter(c => !calcChar(c).isDead);
+    }
+    
+    function selectTarget(attacker, enemies) {
+      const alive = enemies.filter(e => !calcChar(e).isDead);
+      if (alive.length === 0) return null;
+      
+      const mode = document.getElementById('targeting-mode').value;
+      if (mode === 'weakest') return alive.reduce((a, b) => a.neigong < b.neigong ? a : b);
+      if (mode === 'strongest') return alive.reduce((a, b) => calcChar(a).power > calcChar(b).power ? a : b);
+      return randomPick(alive);
+    }
+    
+    // ===== 물약 =====
+    function usePotion(char) {
+      const c = calcChar(char);
+      if (c.isDead) return;
+      
+      const healAmount = parseInt(document.getElementById('potion-heal').value);
+      const hpThreshold = parseInt(document.getElementById('hp-threshold').value);
+      const ngThreshold = parseInt(document.getElementById('ng-threshold').value);
+      
+      if (char.hp <= hpThreshold && char.hpPotions > 0) {
+        const heal = Math.min(healAmount, 100 - char.hp);
+        char.hp += heal;
+        char.hpPotions--;
+        state.totalPotionsUsed++;
+        addLogTime(`💊 ${char.name} 체력 물약! (+${heal.toFixed(1)}%)`, 'potion');
+        char.currentAction = '체력 물약';
+      }
+      
+      if (char.neigong <= ngThreshold && char.ngPotions > 0) {
+        const heal = Math.min(healAmount, 100 - char.neigong);
+        char.neigong += heal;
+        char.ngPotions--;
+        state.totalPotionsUsed++;
+        addLogTime(`💊 ${char.name} 내공 물약! (+${heal.toFixed(1)}%)`, 'potion');
+        char.currentAction = '내공 물약';
+      }
+    }
+    
+    // ===== 전투 =====
+    function processAttack(attacker, defender) {
+      const atkCalc = calcChar(attacker);
+      const defCalc = calcChar(defender);
+      
+      if (atkCalc.isDead || defCalc.isDead) return;
+      
+      state.attackCount++;
+      
+      // 콤보
+      if (attacker.lastTarget === defender.id) attacker.comboCount++;
+      else { attacker.comboCount = 1; attacker.lastTarget = defender.id; }
+      
+      // 무공 대응 선택
+      const selectedMugong = selectMugong(attacker, defender);
+      
+      // 내공 소비 (배율 적용: 무공배율/내공배율)
+      const costMult = getMultipliers();
+      const costScale = costMult.skill / costMult.neigong;
+      const totalCost = (selectedMugong.mugongCost + selectedMugong.balchulCost) * costScale;
+      if (attacker.neigong < totalCost + atkCalc.threshold) {
+        addLogTime(`${attacker.name}: 내공 부족!`, 'critical');
+        attacker.ungi = 0;
+        return;
+      }
+      attacker.neigong -= totalCost;
+      
+      // 방향
+      const atkDir = randomPick(APPROACH_DIR);
+      const defDir = randomPick(DIRECTIONS);
+      let dirBonus = 0;
+      if (atkDir === '전진') dirBonus += 0.10;
+      else dirBonus += 0.08;
+      if (RETREAT_DIR.includes(defDir)) dirBonus += 0.10;
+      
+      const comboBonus = COMBO_BONUS[Math.min(4, attacker.comboCount)] || 0;
+      const atkUngi = attacker.ungi;
+      const defUngi = defender.ungi;
+      
+      addLog(`━━ ${state.attackCount}합: ${attacker.name} → ${defender.name} ━━`, 'divider');
+      
+      // 이동
+      addLogTime(`${attacker.name}, ${atkDir}!`, 'move');
+      attacker.currentAction = `${atkDir} 접근`;
+      defender.currentAction = `${defDir} 대응`;
+      
+      // 무공 (대응 모드 적용)
+      const usesBalchul = selectedMugong.balchul !== '없음' && Math.random() > 0.5;
+      if (usesBalchul) {
+        addLogTime(`${attacker.name}의 ${selectedMugong.balchul}─「${BALCHUL_DESC[selectedMugong.balchul]}」`, 'attack');
+        attacker.currentAction = selectedMugong.balchul;
+      } else {
+        const atkType = randomPick(ATTACK_TYPES[selectedMugong.mugong]);
+        addLogTime(`${attacker.name}의 ${selectedMugong.mugong} ${LEVEL_NAME[selectedMugong.mugongLv]}─「${atkType}」`, 'attack');
+        attacker.currentAction = atkType;
+      }
+      
+      // 방어
+      const defend = randomPick(DEFEND_TYPES);
+      addLogTime(`${defender.name}, ${defend}!`, 'defend');
+      defender.currentAction = defend;
+      
+      // 내상 (피해 분배 + 안정성/500 감소 + 무공 방어력 감소)
+      const dmgSplit = getDamageSplit();
+      const atkRemain = 100 - atkUngi;
+      const defRemain = 100 - defUngi;
+      
+      // 안정성/500 = 내상피해량 감소율
+      const atkStabReduce = 1 - (atkCalc.s.stab / 500);
+      const defStabReduce = 1 - (defCalc.s.stab / 500);
+      
+      // 무공 방어력 = 내상 감소 (공격자는 자기 무공, 방어자도 자기 무공)
+      const atkDefBonus = usesBalchul ? selectedMugong.balchulBonus : selectedMugong.mugongBonus;
+      const defMugong = MUGONG[defender.mugong]?.[defender.mugongLv] || [0, 0];
+      const defDefBonus = defMugong[0] / 100;
+      
+      if (atkUngi < 100) {
+        const atkNaesang = atkRemain * atkCalc.danger * atkStabReduce * (1 - atkDefBonus);
+        attacker.hp -= atkNaesang * dmgSplit.hp;
+        attacker.neigong -= atkNaesang * dmgSplit.ng;
+        if (atkNaesang > 0.5) addLogTime(`  ${attacker.name} 내상 -${atkNaesang.toFixed(1)} (방어${(atkDefBonus*100).toFixed(0)}%)`, 'naesang');
+      }
+      
+      const defNaesang = defRemain * defCalc.danger * defStabReduce * (1 - defDefBonus);
+      defender.hp -= defNaesang * dmgSplit.hp;
+      defender.neigong -= defNaesang * dmgSplit.ng;
+      if (defNaesang > 0.5) addLogTime(`  ${defender.name} 내상 -${defNaesang.toFixed(1)} (방어${(defDefBonus*100).toFixed(0)}%)`, 'naesang');
+      
+      // 피해 (배율 + 피해 분배 + 경지/심법 격차 패널티)
+      const mult = getMultipliers();
+      
+      // 경지 차 패널티: 하위 경지 -3%/단계
+      const levelDiff = atkCalc.g.level - defCalc.g.level;
+      let gyeongjiPenalty = levelDiff < 0 ? levelDiff * 0.03 : 0;
+      
+      // 심법 격차 패널티: 하위 심법 -3%/단계
+      const simbeopDiff = atkCalc.s.tier - defCalc.s.tier;
+      let simbeopPenalty = simbeopDiff < 0 ? simbeopDiff * 0.03 : 0;
+      
+      let modifier = 1 + gyeongjiPenalty + simbeopPenalty;
+      
+      const mugongBonus = usesBalchul ? selectedMugong.balchulBonus : selectedMugong.mugongBonus;
+      const totalBonus = atkCalc.bobeopBonus + mugongBonus + dirBonus + comboBonus;
+      
+      // 배율 적용: 내공배율/100 기준으로 데미지 스케일링
+      const scaleNeigong = mult.neigong / 100;
+      const scaleHp = mult.hp / 100;
+      
+      const baseDamage = atkCalc.power * 10 * modifier * scaleNeigong;
+      const totalDamage = baseDamage * (1 + totalBonus);
+      const hpDmg = totalDamage * dmgSplit.hp * (scaleHp / scaleNeigong);
+      const ngDmg = totalDamage * dmgSplit.ng;
+      
+      defender.hp -= hpDmg;
+      defender.neigong -= ngDmg;
+      
+      // 보너스/패널티 표시
+      let bonusDesc = [];
+      if (atkCalc.bobeopBonus > 0) bonusDesc.push(`보법+${(atkCalc.bobeopBonus*100).toFixed(0)}%`);
+      if (mugongBonus > 0) bonusDesc.push(`무공+${(mugongBonus*100).toFixed(0)}%`);
+      if (dirBonus > 0) bonusDesc.push(`이동+${(dirBonus*100).toFixed(0)}%`);
+      if (comboBonus > 0) bonusDesc.push(`${attacker.comboCount}연타+${(comboBonus*100).toFixed(0)}%`);
+      if (gyeongjiPenalty < 0) bonusDesc.push(`경지차${(gyeongjiPenalty*100).toFixed(0)}%`);
+      if (simbeopPenalty < 0) bonusDesc.push(`심법차${(simbeopPenalty*100).toFixed(0)}%`);
+      
+      if (bonusDesc.length > 0) addLogTime(`  [${bonusDesc.join(', ')}]`, 'combo');
+      addLogTime(`  ⚔️ HP-${hpDmg.toFixed(1)}, 내공-${ngDmg.toFixed(1)}`, 'damage');
+      
+      // 정리
+      [attacker, defender].forEach(c => {
+        c.hp = Math.max(0, c.hp);
+        c.neigong = Math.max(0, c.neigong);
+      });
+      
+      // 공격자: 운기 0 + 이격 쿨다운 (보법 높으면 빠르게 빠짐)
+      const atkBobeop = attacker.bobeop || 0;
+      const retreatTime = Math.max(1, 5 - atkBobeop * 0.4);  // 5초 기본, 보법당 0.4초 감소
+      attacker.ungi = 0;
+      attacker.cooldown = retreatTime;
+      attacker.currentAction = '이격 중';
+      addLogTime(`  ↩️ ${attacker.name} 이격 (${retreatTime.toFixed(1)}초)`, 'move');
+      
+      // 방어자: 운기 유지 + 경직 (보법 높으면 빠르게 회복)
+      const defBobeop = defender.bobeop || 0;
+      const stunTime = Math.max(0.5, 2 - defBobeop * 0.15);  // 2초 기본, 보법당 0.15초 감소
+      defender.cooldown = stunTime;
+      if (!calcChar(defender).isDead) {
+        defender.currentAction = '경직';
+        addLogTime(`  ⚡ ${defender.name} 경직 (${stunTime.toFixed(1)}초)`, 'stun');
+      }
+      
+      // 전투불능
+      if (calcChar(defender).isDead) {
+        addLogTime(`💀 ${defender.name} 전투불능!`, 'critical');
+      }
+      if (calcChar(attacker).isDead) {
+        addLogTime(`💀 ${attacker.name} 내상으로 쓰러졌다!`, 'critical');
+      }
+    }
+    
+    // ===== 게임 루프 =====
+    function gameLoop(timestamp) {
+      if (!state.running) return;
+      
+      const speed = parseFloat(document.getElementById('sim-speed').value);
+      if (state.lastTime === 0) state.lastTime = timestamp;
+      
+      const delta = (timestamp - state.lastTime) / 1000 * speed;
+      state.lastTime = timestamp;
+      state.time += delta;
+      
+      // 운기 충전 + 쿨다운 감소 + 물약
+      [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+        const c = calcChar(char);
+        if (!c.isDead) {
+          // 쿨다운 감소
+          if (char.cooldown > 0) {
+            char.cooldown = Math.max(0, char.cooldown - delta);
+            if (char.cooldown <= 0) {
+              char.currentAction = '대기 중';
+            }
+          }
+          
+          // 쿨다운 없을 때만 운기 충전
+          if (char.cooldown <= 0) {
+            char.ungi += c.ungiPerSec * delta;
+            char.ungi = Math.min(100, char.ungi);
+            if (char.ungi < 80) char.currentAction = `운기 ${char.ungi.toFixed(0)}%`;
+          }
+          
+          usePotion(char);
+        }
+      });
+      
+      // 공격 가능한 캐릭터 수집 (운기 80% 이상 + 쿨다운 없음)
+      const readyChars = [...state.chars.ally, ...state.chars.enemy]
+        .filter(c => c.ungi >= 80 && c.cooldown <= 0 && !calcChar(c).isDead)
+        .map(c => ({ char: c, calc: calcChar(c) }))
+        .sort((a, b) => {
+          if (b.calc.moveSpeed !== a.calc.moveSpeed) return b.calc.moveSpeed - a.calc.moveSpeed;
+          return a.calc.atkTime - b.calc.atkTime;
+        });
+      
+      // 먼저 준비된 캐릭터가 공격
+      if (readyChars.length > 0) {
+        const attacker = readyChars[0].char;
+        const enemies = attacker.team === 'ally' ? state.chars.enemy : state.chars.ally;
+        const target = selectTarget(attacker, enemies);
+        
+        if (target) {
+          processAttack(attacker, target);
+        }
+      }
+      
+      renderAll();
+      
+      // 승패 체크
+      const allyAlive = getAliveChars('ally').length;
+      const enemyAlive = getAliveChars('enemy').length;
+      
+      if (allyAlive === 0 || enemyAlive === 0) {
+        if (allyAlive === 0 && enemyAlive === 0) {
+          state.winner = 'draw';
+          endBattle('⚔️ 쌍방 전멸!');
+        } else if (allyAlive === 0) {
+          state.winner = 'enemy';
+          endBattle(`🏆 적군 승리! (${state.time.toFixed(1)}s, ${state.attackCount}합)`);
+        } else {
+          state.winner = 'ally';
+          endBattle(`🏆 아군 승리! (${state.time.toFixed(1)}s, ${state.attackCount}합)`);
+        }
+        return;
+      }
+      
+      state.animFrame = requestAnimationFrame(gameLoop);
+    }
+    
+    // ===== 컨트롤 =====
+    function startBattle() {
+      const allyCount = state.chars.ally.length;
+      const enemyCount = state.chars.enemy.length;
+      
+      if (allyCount === 0 || enemyCount === 0) {
+        alert('양 팀에 최소 1명씩 배치해주세요!');
+        return;
+      }
+      
+      if (state.running) return;
+      state.running = true;
+      state.lastTime = 0;
+      
+      // 심법 공속 패널티 계산 (전투 시작 시)
+      const allyMaxTier = Math.max(...state.chars.ally.map(c => SIMBEOP[c.simbeop]?.tier || 0));
+      const enemyMaxTier = Math.max(...state.chars.enemy.map(c => SIMBEOP[c.simbeop]?.tier || 0));
+      
+      state.chars.ally.forEach(char => {
+        const myTier = SIMBEOP[char.simbeop]?.tier || 0;
+        const diff = myTier - enemyMaxTier;
+        char.speedPenalty = diff < 0 ? diff * 0.03 : 0;  // 하위 심법 -3%/단계
+      });
+      
+      state.chars.enemy.forEach(char => {
+        const myTier = SIMBEOP[char.simbeop]?.tier || 0;
+        const diff = myTier - allyMaxTier;
+        char.speedPenalty = diff < 0 ? diff * 0.03 : 0;
+      });
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-stop').style.display = 'inline-block';
+      updateAddButtons();
+      
+      if (state.time === 0) {
+        document.getElementById('log-content').innerHTML = '';
+        addLog(`━━━ 전투 개시: ${allyCount} vs ${enemyCount} ━━━`, 'divider');
+        
+        // 심법 격차 표시
+        [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+          if (char.speedPenalty < 0) {
+            addLogTime(`⚠️ ${char.name}: 심법 열세 (공속 ${(char.speedPenalty*100).toFixed(0)}%)`, 'naesang');
+          }
+        });
+        
+        addLogTime('양측이 서로를 노려본다...', 'info');
+        addLogTime('운기를 시작한다!', 'ready');
+      }
+      
+      renderAll();
+      state.animFrame = requestAnimationFrame(gameLoop);
+    }
+    
+    function stopBattle() {
+      state.running = false;
+      state.lastTime = 0;
+      if (state.animFrame) cancelAnimationFrame(state.animFrame);
+      
+      document.getElementById('btn-start').style.display = 'inline-block';
+      document.getElementById('btn-stop').style.display = 'none';
+      
+      addLogTime('전투 일시정지', 'info');
+      renderAll();
+    }
+    
+    function endBattle(resultText) {
+      state.running = false;
+      if (state.animFrame) cancelAnimationFrame(state.animFrame);
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-stop').style.display = 'none';
+      
+      document.getElementById('battle-result').style.display = 'block';
+      document.getElementById('result-text').textContent = resultText;
+      
+      addLog('━━━━━━━━━━━━━━━━━━━━', 'divider');
+      addLog(resultText, 'ready');
+      
+      renderAll();
+    }
+    
+    function resetBattle() {
+      stopBattle();
+      
+      state.time = 0;
+      state.attackCount = 0;
+      state.winner = null;
+      state.totalPotionsUsed = 0;
+      
+      [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+        char.hp = 100;
+        char.neigong = 100;
+        char.ungi = 0;
+        char.cooldown = 0;
+        char.speedPenalty = 0;
+        char.currentAction = '대기 중';
+        char.comboCount = 0;
+        char.lastTarget = null;
+      });
+      
+      document.getElementById('btn-start').style.display = 'inline-block';
+      document.getElementById('btn-stop').style.display = 'none';
+      document.getElementById('battle-result').style.display = 'none';
+      
+      updateAddButtons();
+      
+      document.getElementById('log-content').innerHTML = `
+        <div class="log-line info">양 팀에 캐릭터를 배치하고 전투를 시작하세요.</div>
+        <div class="log-line info">최대 3 vs 3 전투가 가능합니다.</div>
+      `;
+      
+      renderAll();
+    }
+    
+    // ===== 초기화 =====
+    function init() {
+      // 기본 배치: 1 vs 3 (무쌍 시나리오)
+      state.chars.ally.push(createCharacter('ally', {
+        name: '검호', gyeongji: '절정', simbeop: '기본심법',
+        mugong: '검강', mugongLv: 1, bobeop: 5,  // 절정은 검강 下까지
+        balchul: '검기발출', balchulLv: 2,       // 절정은 검기발출 中까지
+        hpPotions: 5, ngPotions: 5
+      }));
+      
+      state.chars.enemy.push(createCharacter('enemy', {
+        name: '도적두목', gyeongji: '일류', simbeop: '기초심법',
+        mugong: '검사', mugongLv: 2, bobeop: 3,  // 일류는 검사 中까지
+        balchul: '검기발출', balchulLv: 1,       // 일류는 검기발출 下까지
+        hpPotions: 2, ngPotions: 2
+      }));
+      state.chars.enemy.push(createCharacter('enemy', {
+        name: '도적1', gyeongji: '이류', simbeop: '기초심법',
+        mugong: '검기', mugongLv: 2, bobeop: 2,  // 이류는 검기 中까지
+        balchul: '없음', balchulLv: 1,           // 이류는 발출 불가
+        hpPotions: 1, ngPotions: 1
+      }));
+      state.chars.enemy.push(createCharacter('enemy', {
+        name: '도적2', gyeongji: '삼류', simbeop: '삼재심법',
+        mugong: '검기', mugongLv: 1, bobeop: 1,  // 삼류는 검기 下만
+        balchul: '없음', balchulLv: 1,           // 삼류는 발출 불가
+        hpPotions: 1, ngPotions: 1
+      }));
+      
+      renderAll();
+      updateAddButtons();
+    }
+    
+    init();
+  </script>
+</body>
+</html>

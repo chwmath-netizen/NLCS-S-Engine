@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S-Engine F-Rank Dungeon Simulator v1.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0f0a1a 0%, #1a1025 50%, #0f0a1a 100%);
+      color: #e0e0e0;
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      padding: 10px 8px;
+      font-size: 12px;
+    }
+    
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    header { text-align: center; margin-bottom: 10px; }
+    
+    h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #9b59b6 0%, #3498db 50%, #2ecc71 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle { color: #888; font-size: 0.7rem; }
+    
+    .main-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr 280px;
+      gap: 12px;
+      align-items: start;
+    }
+    
+    @media (max-width: 1200px) {
+      .main-layout { grid-template-columns: 1fr; }
+    }
+    
+    /* Panel Common */
+    .panel {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    
+    .panel-title {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 0.9rem;
+      color: #ffd700;
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(255,215,0,0.3);
+    }
+    
+    /* Character Card */
+    .char-card {
+      background: rgba(0,0,0,0.25);
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 8px;
+      border-left: 3px solid #3498db;
+    }
+    
+    .char-card.player { border-left-color: #e74c3c; }
+    .char-card.healer { border-left-color: #2ecc71; }
+    .char-card.monster { border-left-color: #9b59b6; }
+    .char-card.dead { opacity: 0.4; filter: grayscale(0.6); }
+    .char-card.active { box-shadow: 0 0 10px rgba(255,215,0,0.5); }
+    
+    .char-name {
+      font-weight: bold;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .char-class {
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .char-class.f { background: rgba(150,150,150,0.3); color: #aaa; }
+    .char-class.d { background: rgba(52,152,219,0.3); color: #3498db; }
+    
+    /* Stat Bar */
+    .stat-bar {
+      margin-bottom: 4px;
+    }
+    
+    .stat-bar .label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      margin-bottom: 2px;
+    }
+    
+    .stat-bar .track {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .stat-bar .fill {
+      height: 100%;
+      transition: width 0.3s;
+    }
+    
+    .stat-bar .fill.hp { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+    .stat-bar .fill.mp { background: linear-gradient(90deg, #2980b9, #3498db); }
+    .stat-bar .fill.fatigue { background: linear-gradient(90deg, #f39c12, #f1c40f); }
+    
+    /* Buff/Debuff Display */
+    .buffs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    
+    .buff {
+      font-size: 0.55rem;
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+    
+    .buff.positive { background: rgba(46,204,113,0.3); color: #2ecc71; }
+    .buff.negative { background: rgba(231,76,60,0.3); color: #e74c3c; }
+    .buff.special { background: rgba(155,89,182,0.3); color: #9b59b6; }
+    
+    /* Battle Log */
+    .battle-log {
+      height: 500px;
+      overflow-y: auto;
+      font-size: 0.7rem;
+      line-height: 1.5;
+    }
+    
+    .log-line { margin-bottom: 2px; padding: 2px 4px; border-radius: 2px; }
+    .log-line.turn { background: rgba(255,215,0,0.1); color: #ffd700; font-weight: bold; }
+    .log-line.attack { color: #e74c3c; }
+    .log-line.skill { color: #9b59b6; }
+    .log-line.heal { color: #2ecc71; }
+    .log-line.damage { color: #ff6b6b; }
+    .log-line.critical { color: #ffd700; font-weight: bold; }
+    .log-line.debuff { color: #e67e22; font-style: italic; }
+    .log-line.info { color: #888; }
+    .log-line.death { color: #c0392b; font-weight: bold; background: rgba(192,57,43,0.1); }
+    .log-line.victory { color: #2ecc71; font-weight: bold; font-size: 0.85rem; }
+    
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover { transform: scale(1.03); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .btn-start { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; }
+    .btn-stop { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; }
+    .btn-reset { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #aaa; }
+    .btn-next { background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; }
+    
+    /* Settings */
+    .settings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    
+    .setting-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .setting-item label {
+      font-size: 0.6rem;
+      color: #888;
+    }
+    
+    .setting-item select {
+      padding: 4px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 3px;
+      color: #fff;
+      font-size: 0.65rem;
+    }
+    
+    /* Monster Select */
+    .monster-select {
+      margin-bottom: 10px;
+    }
+    
+    .monster-btn {
+      display: block;
+      width: 100%;
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: rgba(155,89,182,0.15);
+      border: 1px solid rgba(155,89,182,0.3);
+      border-radius: 4px;
+      color: #bb8fce;
+      font-size: 0.7rem;
+      cursor: pointer;
+      text-align: left;
+    }
+    
+    .monster-btn:hover { background: rgba(155,89,182,0.25); }
+    .monster-btn.selected { background: rgba(155,89,182,0.4); border-color: #9b59b6; }
+    
+    /* Skill Buttons */
+    .skill-panel {
+      margin-top: 10px;
+    }
+    
+    .skill-btn {
+      display: block;
+      width: 100%;
+      padding: 6px 8px;
+      margin-bottom: 4px;
+      background: rgba(52,152,219,0.15);
+      border: 1px solid rgba(52,152,219,0.3);
+      border-radius: 4px;
+      color: #5dade2;
+      font-size: 0.65rem;
+      cursor: pointer;
+      text-align: left;
+    }
+    
+    .skill-btn:hover { background: rgba(52,152,219,0.25); }
+    .skill-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .skill-btn.healer { background: rgba(46,204,113,0.15); border-color: rgba(46,204,113,0.3); color: #58d68d; }
+    
+    .skill-cost {
+      font-size: 0.55rem;
+      color: #888;
+      float: right;
+    }
+    
+    /* Battle Result */
+    .battle-result {
+      text-align: center;
+      padding: 15px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .result-text {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.1rem;
+      color: #ffd700;
+    }
+    
+    /* Battle Stats */
+    .battle-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 0.65rem;
+    }
+    
+    .stat-box {
+      background: rgba(255,255,255,0.05);
+      padding: 6px;
+      border-radius: 4px;
+      text-align: center;
+    }
+    
+    .stat-box .value {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #ffd700;
+    }
+    
+    .stat-box .label {
+      color: #888;
+      font-size: 0.55rem;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 15px;
+      color: #555;
+      font-size: 0.6rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>S-Engine F-Rank Dungeon Simulator</h1>
+      <p class="subtitle">v1.0 - Hunter Combat Validation (HP/MP/Fatigue System)</p>
+    </header>
+    
+    <div class="main-layout">
+      <!-- Left: Party -->
+      <div class="panel">
+        <div class="panel-title">🎮 Party</div>
+        
+        <div id="party-chars"></div>
+        
+        <div class="skill-panel">
+          <div class="panel-title" style="font-size:0.75rem;">⚔️ Busoching Skills</div>
+          <div id="busoching-skills"></div>
+          
+          <div class="panel-title" style="font-size:0.75rem; margin-top:8px;">💚 Minji Skills</div>
+          <div id="minji-skills"></div>
+        </div>
+      </div>
+      
+      <!-- Center: Battle Log -->
+      <div class="panel">
+        <div class="panel-title">📜 Battle Log</div>
+        
+        <div class="controls">
+          <button class="btn btn-start" id="btn-start" onclick="startBattle()">▶️ Start Battle</button>
+          <button class="btn btn-next" id="btn-next" onclick="nextTurn()" style="display:none;">⏭️ Next Turn</button>
+          <button class="btn btn-stop" id="btn-auto" onclick="toggleAuto()">🔄 Auto Battle</button>
+          <button class="btn btn-reset" onclick="resetBattle()">↺ Reset</button>
+        </div>
+        
+        <div class="settings">
+          <div class="setting-item">
+            <label>⏱️ Auto Speed</label>
+            <select id="auto-speed">
+              <option value="1000">Slow</option>
+              <option value="500" selected>Normal</option>
+              <option value="200">Fast</option>
+              <option value="50">Max</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label>🎯 Target Priority</label>
+            <select id="targeting">
+              <option value="weak">Weakest</option>
+              <option value="strong">Strongest</option>
+              <option value="random">Random</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="battle-log" id="battle-log">
+          <div class="log-line info">Enter the dungeon...</div>
+        </div>
+        
+        <div class="battle-result" id="battle-result">
+          <div class="result-text" id="result-text"></div>
+        </div>
+        
+        <div class="battle-stats">
+          <div class="stat-box">
+            <div class="value" id="stat-turn">0</div>
+            <div class="label">Turn</div>
+          </div>
+          <div class="stat-box">
+            <div class="value" id="stat-damage">0</div>
+            <div class="label">Total Damage</div>
+          </div>
+          <div class="stat-box">
+            <div class="value" id="stat-heals">0</div>
+            <div class="label">Total Heals</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right: Monsters -->
+      <div class="panel">
+        <div class="panel-title">👾 Dungeon Monsters</div>
+        
+        <div class="monster-select">
+          <div class="panel-title" style="font-size:0.7rem;">Select Dungeon</div>
+          <button class="monster-btn" onclick="setDungeon('easy')">🟢 Schi Lab (Easy)</button>
+          <button class="monster-btn selected" onclick="setDungeon('normal')">🟡 Schi Lab (Normal)</button>
+          <button class="monster-btn" onclick="setDungeon('hard')">🔴 Goblin Mix (Hard)</button>
+          <button class="monster-btn" onclick="setDungeon('boss')">💀 Grand Schi (Boss)</button>
+        </div>
+        
+        <div class="panel-title" style="font-size:0.7rem;">Current Enemies</div>
+        <div id="enemy-chars"></div>
+      </div>
+    </div>
+    
+    <footer>
+      S-Engine F-Rank Dungeon Simulator v1.0 | Hunter Combat Validation System | © ShadowK
+    </footer>
+  </div>
+  
+  <script>
+    // ===== Data Definitions =====
+    
+    // Skills - Busoching
+    const BUSOCHING_SKILLS = {
+      slash: { name: 'Shovel Slash', hp: 0, fatigue: 5, power: 15, desc: 'Basic', type: 'single' },
+      pierce: { name: 'Pierce', hp: 0, fatigue: 10, power: 20, crit: 2, desc: '2x Crit Chance', type: 'single' },
+      downstrike: { name: 'Downstrike', hp: 5, fatigue: 15, power: 30, armorPen: 0.3, desc: '30% Armor Pen', type: 'single' },
+      crosscut: { name: 'Cross Cut', hp: 5, fatigue: 15, power: 28, knockback: true, desc: 'Knockback', type: 'single' },
+      homerun: { name: 'Shovel Homerun', hp: 5, fatigue: 22, power: 20, desc: 'AoE', type: 'aoe' },
+      rush: { name: 'Point Rush', hp: 5, fatigue: 15, power: 25, nextBonus: true, desc: 'Next Atk +30%', type: 'single' },
+      ultimate: { name: 'Dual Charge Thrust', hp: 30, fatigue: 50, power: 80, crit: 1.2, desc: 'Ultimate', type: 'single' }
+    };
+    
+    // Skills - Minji
+    const MINJI_SKILLS = {
+      healSmall: { name: 'Heal (S)', mp: 15, fatigue: 5, heal: 40, desc: 'Small Heal', type: 'heal' },
+      healMedium: { name: 'Heal (M)', mp: 30, fatigue: 10, heal: 80, desc: 'Medium Heal', type: 'heal' },
+      cure: { name: 'Cure', mp: 30, fatigue: 15, healPercent: 0.3, desc: 'Heal Wounds', type: 'cure' },
+      poisonRemove: { name: 'Poison Remove', mp: 20, fatigue: 10, desc: 'Cleanse Poison', type: 'cleanse' },
+      overheal: { name: 'Emergency Overheal', mp: 50, fatigue: 20, heal: 150, hpThreshold: 0.1, desc: 'HP<10% Only', type: 'emergency' }
+    };
+    
+    // Monster Definitions
+    const MONSTERS = {
+      schiSmall: { name: 'Small Schi', hp: 60, def: 1, atk: 5, type: 'slime' },
+      schiAdult: { name: 'Schi Adult', hp: 180, def: 3, atk: 12, type: 'slime' },
+      schiMutant: { name: 'Mutant Schi', hp: 220, def: 4, atk: 15, type: 'slime', poison: true },
+      goblinWeak: { name: 'Weak Goblin', hp: 80, def: 2, atk: 6, type: 'goblin' },
+      goblinAdult: { name: 'Goblin Adult', hp: 150, def: 5, atk: 18, type: 'goblin' },
+      grandSchi: { name: 'Grand Schi', hp: 420, def: 8, atk: 25, type: 'boss', slimeSpray: true }
+    };
+    
+    // Dungeon Configurations
+    const DUNGEONS = {
+      easy: [
+        { ...MONSTERS.schiSmall },
+        { ...MONSTERS.schiSmall },
+        { ...MONSTERS.schiSmall }
+      ],
+      normal: [
+        { ...MONSTERS.schiSmall },
+        { ...MONSTERS.schiAdult },
+        { ...MONSTERS.schiSmall }
+      ],
+      hard: [
+        { ...MONSTERS.goblinWeak },
+        { ...MONSTERS.goblinAdult },
+        { ...MONSTERS.schiMutant }
+      ],
+      boss: [
+        { ...MONSTERS.grandSchi }
+      ]
+    };
+    
+    // Game State
+    let state = {
+      turn: 0,
+      phase: 'idle', // idle, player, healer, enemy, end
+      party: [],
+      enemies: [],
+      currentDungeon: 'normal',
+      autoMode: false,
+      autoInterval: null,
+      totalDamage: 0,
+      totalHeals: 0,
+      nextAttackBonus: false,
+      battleStarted: false
+    };
+    
+    // ===== Character Creation =====
+    function createBusoching() {
+      return {
+        id: 'busoching',
+        name: 'Busoching',
+        type: 'player',
+        class: 'F',
+        maxHp: 300,
+        hp: 300,
+        maxMp: 0,
+        mp: 0,
+        maxFatigue: 200,
+        fatigue: 200,
+        atk: 25,
+        def: 3,
+        isDead: false,
+        buffs: [],
+        poisoned: false
+      };
+    }
+    
+    function createMinji() {
+      return {
+        id: 'minji',
+        name: 'Minji',
+        type: 'healer',
+        class: 'D',
+        maxHp: 400,
+        hp: 400,
+        maxMp: 250,
+        mp: 250,
+        maxFatigue: 400,
+        fatigue: 400,
+        atk: 5,
+        def: 2,
+        isDead: false,
+        buffs: [],
+        feared: false,
+        poisoned: false
+      };
+    }
+    
+    function createMonster(template) {
+      return {
+        id: 'monster_' + Math.random().toString(36).substr(2, 9),
+        name: template.name,
+        type: 'monster',
+        maxHp: template.hp,
+        hp: template.hp,
+        def: template.def,
+        atk: template.atk,
+        monsterType: template.type,
+        isDead: false,
+        poison: template.poison || false,
+        slimeSpray: template.slimeSpray || false
+      };
+    }
+    
+    // ===== Low HP Bonus Calc =====
+    function getDdalpiBonus(char) {
+      if (char.id !== 'busoching') return 0;
+      const hpPercent = char.hp / char.maxHp;
+      if (hpPercent <= 0.1) return 0.4;
+      if (hpPercent <= 0.3) return 0.2;
+      if (hpPercent <= 0.5) return 0.1;
+      return 0;
+    }
+    
+    // ===== Fear Check =====
+    function checkFear(minji, enemies) {
+      const hasSlime = enemies.some(e => !e.isDead && (e.monsterType === 'slime' || e.monsterType === 'boss'));
+      if (hasSlime && !minji.feared) {
+        minji.feared = true;
+        minji.fatigue = Math.max(0, minji.fatigue - 20);
+        addLog(`😱 Minji: "Ew! Gross!" (Fear activated, Fatigue -20)`, 'debuff');
+        return true;
+      }
+      return false;
+    }
+    
+    // ===== Weak Point Check =====
+    function checkWeakpoint(skill) {
+      const baseChance = 0.15;
+      const critMult = skill.crit || 1;
+      return Math.random() < baseChance * critMult;
+    }
+    
+    // ===== Damage Calc =====
+    function calculateDamage(attacker, defender, skill) {
+      let basePower = skill ? skill.power : attacker.atk;
+      
+      // Low HP Bonus
+      const ddalpi = getDdalpiBonus(attacker);
+      basePower *= (1 + ddalpi);
+      
+      // 다음 공격 Bonus (after Point Rush)
+      if (state.nextAttackBonus && attacker.id === 'busoching') {
+        basePower *= 1.3;
+        state.nextAttackBonus = false;
+        addLog(`  💥 Point Rush Bonus! (+30%)`, 'critical');
+      }
+      
+      // DEF Calc
+      let armor = defender.def;
+      if (skill && skill.armorPen) {
+        armor *= (1 - skill.armorPen);
+      }
+      
+      let damage = Math.max(1, basePower - armor);
+      
+      // Weak Point Check
+      if (skill && checkWeakpoint(skill)) {
+        const weakMult = 1.5 + Math.random() * 0.5;
+        damage *= weakMult;
+        addLog(`  🎯 Weak Point Hit! (x${weakMult.toFixed(1)})`, 'critical');
+      }
+      
+      return Math.floor(damage);
+    }
+    
+    // ===== Combat Actions =====
+    function useSkill(skillId, isHealer = false) {
+      if (!state.battleStarted) return;
+      
+      const skills = isHealer ? MINJI_SKILLS : BUSOCHING_SKILLS;
+      const skill = skills[skillId];
+      const char = isHealer ? state.party[1] : state.party[0];
+      
+      if (!char || char.isDead) return;
+      
+      // Cost Check
+      if (skill.hp && char.hp <= skill.hp) {
+        addLog(`❌ ${char.name}: Not enough HP!`, 'info');
+        return;
+      }
+      if (skill.mp && char.mp < skill.mp) {
+        addLog(`❌ ${char.name}: Not enough MP!`, 'info');
+        return;
+      }
+      if (skill.fatigue && char.fatigue < skill.fatigue) {
+        addLog(`❌ ${char.name}: Not enough Fatigue!`, 'info');
+        return;
+      }
+      
+      // Cost Consume
+      if (skill.hp) char.hp -= skill.hp;
+      if (skill.mp) char.mp -= skill.mp;
+      if (skill.fatigue) char.fatigue -= skill.fatigue;
+      
+      // Skill Type Processing
+      if (skill.type === 'heal' || skill.type === 'emergency' || skill.type === 'cure') {
+        // Heal Skill
+        const target = state.party[0]; // Heal Busoching
+        
+        if (skill.type === 'emergency' && target.hp / target.maxHp > skill.hpThreshold) {
+          addLog(`❌ Overheal only usable below 10% HP!`, 'info');
+          // Cost Refund
+          if (skill.mp) char.mp += skill.mp;
+          if (skill.fatigue) char.fatigue += skill.fatigue;
+          return;
+        }
+        
+        // Fear State 힐 실패 확률
+        if (char.feared && Math.random() < 0.1) {
+          addLog(`💔 ${char.name}: Hands shaking, heal failed! (Fear)`, 'debuff');
+          return;
+        }
+        
+        let healAmount = skill.heal || 0;
+        if (skill.healPercent) {
+          healAmount = Math.floor(target.maxHp * skill.healPercent);
+        }
+        
+        const actualHeal = Math.min(healAmount, target.maxHp - target.hp);
+        target.hp += actualHeal;
+        state.totalHeals += actualHeal;
+        
+        addLog(`💚 ${char.name} → ${target.name}: ${skill.name} (+${actualHeal} HP)`, 'heal');
+        
+        if (skill.type === 'cure' && target.poisoned) {
+          target.poisoned = false;
+          addLog(`  ✨ Poison cured!`, 'heal');
+        }
+      } else if (skill.type === 'cleanse') {
+        const target = state.party[0];
+        if (target.poisoned) {
+          target.poisoned = false;
+          addLog(`💚 ${char.name}: ${skill.name} - Poison removed!`, 'heal');
+        } else {
+          addLog(`💚 ${char.name}: ${skill.name} - No status effects to remove`, 'info');
+        }
+      } else {
+        // Attack Skill
+        const aliveEnemies = state.enemies.filter(e => !e.isDead);
+        if (aliveEnemies.length === 0) return;
+        
+        if (skill.type === 'aoe') {
+          // AoESkill
+          addLog(`⚔️ ${char.name}: ${skill.name}! (AoE)`, 'skill');
+          aliveEnemies.forEach(enemy => {
+            const damage = calculateDamage(char, enemy, skill);
+            enemy.hp -= damage;
+            state.totalDamage += damage;
+            addLog(`  → ${enemy.name}: -${damage} HP`, 'damage');
+            checkDeath(enemy);
+          });
+        } else {
+          // Single Target
+          const target = selectTarget(aliveEnemies);
+          const damage = calculateDamage(char, target, skill);
+          target.hp -= damage;
+          state.totalDamage += damage;
+          
+          const ddalpi = getDdalpiBonus(char);
+          let ddalpiText = '';
+          if (ddalpi > 0) ddalpiText = ` [Low HP +${(ddalpi*100).toFixed(0)}%]`;
+          
+          addLog(`⚔️ ${char.name}: ${skill.name} → ${target.name}${ddalpiText}`, 'skill');
+          addLog(`  → ${target.name}: -${damage} HP (Remaining HP: ${Math.max(0, target.hp)})`, 'damage');
+          
+          // Point Rush Bonus
+          if (skill.nextBonus) {
+            state.nextAttackBonus = true;
+            addLog(`  📈 Next attack buffed!`, 'info');
+          }
+          
+          checkDeath(target);
+        }
+      }
+      
+      renderAll();
+      checkBattleEnd();
+    }
+    
+    function selectTarget(enemies) {
+      const mode = document.getElementById('targeting').value;
+      if (mode === 'weak') {
+        return enemies.reduce((a, b) => a.hp < b.hp ? a : b);
+      } else if (mode === 'strong') {
+        return enemies.reduce((a, b) => a.hp > b.hp ? a : b);
+      } else {
+        return enemies[Math.floor(Math.random() * enemies.length)];
+      }
+    }
+    
+    function checkDeath(char) {
+      if (char.hp <= 0) {
+        char.hp = 0;
+        char.isDead = true;
+        addLog(`💀 ${char.name} has fallen!`, 'death');
+      }
+    }
+    
+    // ===== Enemy Turn =====
+    function enemyTurn() {
+      const aliveEnemies = state.enemies.filter(e => !e.isDead);
+      const aliveParty = state.party.filter(p => !p.isDead);
+      
+      if (aliveEnemies.length === 0 || aliveParty.length === 0) return;
+      
+      aliveEnemies.forEach(enemy => {
+        // Target Select (Normal Busoching Priority)
+        let target = aliveParty.find(p => p.id === 'busoching') || aliveParty[0];
+        
+        // Slime Attack (Boss/Mutant)
+        if (enemy.slimeSpray && Math.random() < 0.3) {
+          const minji = state.party[1];
+          if (minji && !minji.isDead) {
+            addLog(`🟣 ${enemy.name}: Slime Spray!`, 'skill');
+            if (!minji.feared) {
+              minji.feared = true;
+              minji.fatigue = Math.max(0, minji.fatigue - 20);
+              addLog(`  😱 민지 Fear 발동! (Fatigue -20)`, 'debuff');
+            }
+            // 스Turn 확률
+            if (Math.random() < 0.3) {
+              addLog(`  🤢 Minji: Nausea... (1Turn 행동불능)`, 'debuff');
+            }
+          }
+        }
+        
+        // Poison Attack
+        if (enemy.poison && Math.random() < 0.4) {
+          target.poisoned = true;
+          addLog(`🟢 ${enemy.name}: Poison Attack → ${target.name}!`, 'debuff');
+        }
+        
+        // Normal Attack
+        const damage = Math.max(1, enemy.atk - target.def);
+        target.hp -= damage;
+        state.totalDamage += damage;
+        
+        addLog(`👊 ${enemy.name} → ${target.name}: -${damage} HP`, 'attack');
+        checkDeath(target);
+      });
+      
+      // Poison Damage
+      state.party.forEach(char => {
+        if (char.poisoned && !char.isDead) {
+          const poisonDmg = Math.floor(char.maxHp * 0.03);
+          char.hp -= poisonDmg;
+          addLog(`☠️ ${char.name}: Poison Damage -${poisonDmg}`, 'debuff');
+          checkDeath(char);
+        }
+      });
+    }
+    
+    // ===== Turn 진행 =====
+    function nextTurn() {
+      if (!state.battleStarted) return;
+      
+      state.turn++;
+      addLog(`━━━ Turn ${state.turn} ━━━`, 'turn');
+      
+      // Fatigue Check
+      state.party.forEach(char => {
+        if (char.fatigue <= 0 && !char.isDead) {
+          addLog(`😫 ${char.name}: FTG로 has fallen!`, 'death');
+          char.isDead = true;
+        }
+      });
+      
+      // Fear Check (매 Turn)
+      const minji = state.party[1];
+      if (minji && !minji.isDead) {
+        checkFear(minji, state.enemies);
+      }
+      
+      // AI Auto Battle
+      if (state.autoMode) {
+        autoAction();
+      }
+      
+      // Enemy Turn
+      setTimeout(() => {
+        enemyTurn();
+        renderAll();
+        checkBattleEnd();
+      }, state.autoMode ? 100 : 300);
+    }
+    
+    // ===== AI Auto Battle =====
+    function autoAction() {
+      const busoching = state.party[0];
+      const minji = state.party[1];
+      
+      // Minji AI: Heal Priority
+      if (minji && !minji.isDead && minji.mp >= 15 && minji.fatigue >= 5) {
+        if (busoching.hp / busoching.maxHp < 0.1 && minji.mp >= 50) {
+          useSkill('overheal', true);
+        } else if (busoching.hp / busoching.maxHp < 0.5 && minji.mp >= 30) {
+          useSkill('healMedium', true);
+        } else if (busoching.hp / busoching.maxHp < 0.75) {
+          useSkill('healSmall', true);
+        } else if (busoching.poisoned && minji.mp >= 20) {
+          useSkill('poisonRemove', true);
+        }
+      }
+      
+      // Busoching AI: Attack
+      if (busoching && !busoching.isDead) {
+        const hpPercent = busoching.hp / busoching.maxHp;
+        const enemies = state.enemies.filter(e => !e.isDead);
+        
+        if (enemies.length === 0) return;
+        
+        // Ultimate if Boss
+        if (enemies.some(e => e.monsterType === 'boss') && busoching.fatigue >= 50 && hpPercent < 0.3) {
+          useSkill('ultimate', false);
+        }
+        // 다수면 AoESkill
+        else if (enemies.length >= 2 && busoching.fatigue >= 22) {
+          useSkill('homerun', false);
+        }
+        // Low HP면 강한 Skill술
+        else if (hpPercent < 0.3 && busoching.fatigue >= 15) {
+          useSkill('downstrike', false);
+        }
+        // Basic
+        else if (busoching.fatigue >= 10) {
+          useSkill('pierce', false);
+        } else {
+          useSkill('slash', false);
+        }
+      }
+    }
+    
+    // ===== Battle Control =====
+    function startBattle() {
+      if (state.battleStarted) return;
+      
+      state.battleStarted = true;
+      state.turn = 0;
+      state.totalDamage = 0;
+      state.totalHeals = 0;
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'inline-block';
+      
+      addLog(`━━━ F-Rank Dungeon Battle Start! ━━━`, 'turn');
+      addLog(`Party: ${state.party.map(p => p.name).join(', ')}`, 'info');
+      addLog(`Enemies: ${state.enemies.map(e => e.name).join(', ')}`, 'info');
+      
+      // 민지 Fear Check
+      checkFear(state.party[1], state.enemies);
+      
+      renderAll();
+    }
+    
+    function toggleAuto() {
+      state.autoMode = !state.autoMode;
+      const btn = document.getElementById('btn-auto');
+      
+      if (state.autoMode) {
+        btn.textContent = '⏹️ Stop Auto';
+        btn.className = 'btn btn-stop';
+        
+        const speed = parseInt(document.getElementById('auto-speed').value);
+        state.autoInterval = setInterval(() => {
+          if (state.battleStarted && !checkBattleEnd()) {
+            nextTurn();
+          } else {
+            toggleAuto();
+          }
+        }, speed);
+      } else {
+        btn.textContent = '🔄 Auto Battle';
+        btn.className = 'btn btn-stop';
+        if (state.autoInterval) {
+          clearInterval(state.autoInterval);
+          state.autoInterval = null;
+        }
+      }
+    }
+    
+    function checkBattleEnd() {
+      const aliveParty = state.party.filter(p => !p.isDead);
+      const aliveEnemies = state.enemies.filter(e => !e.isDead);
+      
+      if (aliveParty.length === 0) {
+        endBattle('💀 Wiped... Dungeon Failed');
+        return true;
+      }
+      
+      if (aliveEnemies.length === 0) {
+        endBattle(`🏆 Clear! (${state.turn}Turn, Total Damage ${state.totalDamage})`);
+        return true;
+      }
+      
+      return false;
+    }
+    
+    function endBattle(result) {
+      state.battleStarted = false;
+      
+      if (state.autoInterval) {
+        clearInterval(state.autoInterval);
+        state.autoInterval = null;
+      }
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-next').style.display = 'none';
+      document.getElementById('btn-auto').textContent = '🔄 Auto Battle';
+      
+      document.getElementById('battle-result').style.display = 'block';
+      document.getElementById('result-text').textContent = result;
+      
+      addLog(`━━━━━━━━━━━━━━━━━━━━`, 'turn');
+      addLog(result, 'victory');
+      
+      // Low HP Bonus 통계
+      const busoching = state.party[0];
+      if (busoching) {
+        const finalDdalpi = getDdalpiBonus(busoching);
+        if (finalDdalpi > 0) {
+          addLog(`📊 Low HP Bonus Active: +${(finalDdalpi*100).toFixed(0)}%`, 'info');
+        }
+      }
+    }
+    
+    function resetBattle() {
+      if (state.autoInterval) {
+        clearInterval(state.autoInterval);
+        state.autoInterval = null;
+      }
+      
+      state.battleStarted = false;
+      state.turn = 0;
+      state.totalDamage = 0;
+      state.totalHeals = 0;
+      state.autoMode = false;
+      state.nextAttackBonus = false;
+      
+      // Party Reset
+      state.party = [createBusoching(), createMinji()];
+      
+      // Dungeon Reset
+      setDungeon(state.currentDungeon);
+      
+      document.getElementById('btn-start').style.display = 'inline-block';
+      document.getElementById('btn-next').style.display = 'none';
+      document.getElementById('btn-auto').textContent = '🔄 Auto Battle';
+      document.getElementById('btn-auto').className = 'btn btn-stop';
+      document.getElementById('battle-result').style.display = 'none';
+      
+      document.getElementById('battle-log').innerHTML = '<div class="log-line info">Enter the dungeon...</div>';
+      
+      renderAll();
+    }
+    
+    function setDungeon(dungeonId) {
+      state.currentDungeon = dungeonId;
+      state.enemies = DUNGEONS[dungeonId].map(m => createMonster(m));
+      
+      // Button Selection
+      document.querySelectorAll('.monster-btn').forEach(btn => btn.classList.remove('selected'));
+      event?.target?.classList.add('selected');
+      
+      renderAll();
+    }
+    
+    // ===== Log =====
+    function addLog(text, type = 'info') {
+      const log = document.getElementById('battle-log');
+      const line = document.createElement('div');
+      line.className = `log-line ${type}`;
+      line.textContent = text;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+    }
+    
+    // ===== Rendering =====
+    function renderAll() {
+      renderParty();
+      renderEnemies();
+      renderSkills();
+      renderStats();
+    }
+    
+    function renderParty() {
+      const container = document.getElementById('party-chars');
+      container.innerHTML = '';
+      
+      state.party.forEach(char => {
+        const card = document.createElement('div');
+        card.className = `char-card ${char.type}${char.isDead ? ' dead' : ''}`;
+        
+        // Low HP Bonus Calc
+        const ddalpi = getDdalpiBonus(char);
+        let ddalpiText = '';
+        if (ddalpi > 0) {
+          ddalpiText = `<span class="buff special">Low HP +${(ddalpi*100).toFixed(0)}%</span>`;
+        }
+        
+        // 디버프 표시
+        let debuffText = '';
+        if (char.feared) debuffText += '<span class="buff negative">Fear</span>';
+        if (char.poisoned) debuffText += '<span class="buff negative">Poison</span>';
+        
+        card.innerHTML = `
+          <div class="char-name">
+            ${char.name}
+            <span class="char-class ${char.class.toLowerCase()}">${char.class}-Rank</span>
+          </div>
+          <div class="stat-bar">
+            <div class="label"><span>❤️ HP</span><span>${char.hp}/${char.maxHp}</span></div>
+            <div class="track"><div class="fill hp" style="width:${(char.hp/char.maxHp)*100}%"></div></div>
+          </div>
+          ${char.maxMp > 0 ? `
+          <div class="stat-bar">
+            <div class="label"><span>💙 MP</span><span>${char.mp}/${char.maxMp}</span></div>
+            <div class="track"><div class="fill mp" style="width:${(char.mp/char.maxMp)*100}%"></div></div>
+          </div>
+          ` : ''}
+          <div class="stat-bar">
+            <div class="label"><span>⚡ Fatigue</span><span>${char.fatigue}/${char.maxFatigue}</span></div>
+            <div class="track"><div class="fill fatigue" style="width:${(char.fatigue/char.maxFatigue)*100}%"></div></div>
+          </div>
+          <div class="buffs">${ddalpiText}${debuffText}</div>
+        `;
+        
+        container.appendChild(card);
+      });
+    }
+    
+    function renderEnemies() {
+      const container = document.getElementById('enemy-chars');
+      container.innerHTML = '';
+      
+      state.enemies.forEach(enemy => {
+        const card = document.createElement('div');
+        card.className = `char-card monster${enemy.isDead ? ' dead' : ''}`;
+        
+        card.innerHTML = `
+          <div class="char-name">${enemy.name}</div>
+          <div class="stat-bar">
+            <div class="label"><span>❤️ HP</span><span>${Math.max(0, enemy.hp)}/${enemy.maxHp}</span></div>
+            <div class="track"><div class="fill hp" style="width:${Math.max(0, (enemy.hp/enemy.maxHp)*100)}%"></div></div>
+          </div>
+          <div style="font-size:0.6rem;color:#888;margin-top:4px;">
+            ATK: ${enemy.atk} | DEF: ${enemy.def}
+          </div>
+        `;
+        
+        container.appendChild(card);
+      });
+    }
+    
+    function renderSkills() {
+      // Busoching Skills
+      const bsContainer = document.getElementById('busoching-skills');
+      bsContainer.innerHTML = '';
+      const busoching = state.party[0];
+      
+      Object.entries(BUSOCHING_SKILLS).forEach(([id, skill]) => {
+        const btn = document.createElement('button');
+        btn.className = 'skill-btn';
+        
+        const canUse = busoching && !busoching.isDead && 
+          busoching.hp > (skill.hp || 0) && 
+          busoching.fatigue >= (skill.fatigue || 0) &&
+          state.battleStarted;
+        
+        btn.disabled = !canUse;
+        btn.onclick = () => useSkill(id, false);
+        
+        let costText = [];
+        if (skill.hp) costText.push(`HP ${skill.hp}`);
+        if (skill.fatigue) costText.push(`FTG ${skill.fatigue}`);
+        
+        btn.innerHTML = `
+          ${skill.name} <span class="skill-cost">${costText.join(' / ')}</span>
+          <br><span style="font-size:0.55rem;color:#666;">${skill.desc}</span>
+        `;
+        
+        bsContainer.appendChild(btn);
+      });
+      
+      // Minji Skills
+      const mjContainer = document.getElementById('minji-skills');
+      mjContainer.innerHTML = '';
+      const minji = state.party[1];
+      
+      Object.entries(MINJI_SKILLS).forEach(([id, skill]) => {
+        const btn = document.createElement('button');
+        btn.className = 'skill-btn healer';
+        
+        const canUse = minji && !minji.isDead && 
+          minji.mp >= (skill.mp || 0) && 
+          minji.fatigue >= (skill.fatigue || 0) &&
+          state.battleStarted;
+        
+        btn.disabled = !canUse;
+        btn.onclick = () => useSkill(id, true);
+        
+        let costText = [];
+        if (skill.mp) costText.push(`MP ${skill.mp}`);
+        if (skill.fatigue) costText.push(`FTG ${skill.fatigue}`);
+        
+        btn.innerHTML = `
+          ${skill.name} <span class="skill-cost">${costText.join(' / ')}</span>
+          <br><span style="font-size:0.55rem;color:#666;">${skill.desc}</span>
+        `;
+        
+        mjContainer.appendChild(btn);
+      });
+    }
+    
+    function renderStats() {
+      document.getElementById('stat-turn').textContent = state.turn;
+      document.getElementById('stat-damage').textContent = state.totalDamage;
+      document.getElementById('stat-heals').textContent = state.totalHeals;
+    }
+    
+    // ===== Reset =====
+    function init() {
+      state.party = [createBusoching(), createMinji()];
+      setDungeon('normal');
+      renderAll();
+    }
+    
+    init();
+  </script>
+</body>
+</html>

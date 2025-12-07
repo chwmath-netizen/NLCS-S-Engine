@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S-Engine 戰鬪 試演器 v5 - 실시간 운기</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+      color: #e0e0e0;
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      padding: 15px 10px;
+      font-size: 14px;
+    }
+    
+    .container { max-width: 1400px; margin: 0 auto; }
+    
+    header { text-align: center; margin-bottom: 15px; }
+    
+    h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #ffd700 0%, #ff6b35 50%, #ffd700 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle { color: #888; font-size: 0.8rem; }
+    
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 420px 1fr;
+      gap: 15px;
+      align-items: start;
+    }
+    
+    @media (max-width: 1200px) {
+      .main-layout { grid-template-columns: 1fr; }
+    }
+    
+    /* 캐릭터 패널 */
+    .char-panel {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .char-panel.ally { border-color: rgba(231,76,60,0.3); }
+    .char-panel.enemy { border-color: rgba(52,152,219,0.3); }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .panel-header h2 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.1rem;
+    }
+    
+    .panel-header.ally h2 { color: #e74c3c; }
+    .panel-header.enemy h2 { color: #3498db; }
+    
+    .char-name {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    
+    .char-name.ally { color: #e74c3c; }
+    .char-name.enemy { color: #3498db; }
+    
+    .char-config {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .config-item label {
+      display: block;
+      font-size: 0.7rem;
+      color: #888;
+      margin-bottom: 2px;
+    }
+    
+    .config-item select, .config-item input {
+      width: 100%;
+      padding: 5px 8px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 0.8rem;
+    }
+    
+    /* 운기 게이지 - 핵심 UI */
+    .ungi-section {
+      background: rgba(0,0,0,0.4);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .ungi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .ungi-label {
+      font-size: 0.85rem;
+      color: #ffd700;
+      font-weight: bold;
+    }
+    
+    .ungi-value {
+      font-size: 1.2rem;
+      font-weight: bold;
+      font-family: 'D2Coding', monospace;
+    }
+    
+    .ungi-value.ready { color: #2ecc71; }
+    .ungi-value.charging { color: #f39c12; }
+    .ungi-value.low { color: #e74c3c; }
+    
+    .ungi-bar-container {
+      position: relative;
+      height: 24px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .ungi-bar {
+      height: 100%;
+      border-radius: 12px;
+      transition: width 0.05s linear;
+      position: relative;
+    }
+    
+    .ungi-bar.ally {
+      background: linear-gradient(90deg, #c0392b 0%, #e74c3c 50%, #f39c12 100%);
+    }
+    
+    .ungi-bar.enemy {
+      background: linear-gradient(90deg, #2980b9 0%, #3498db 50%, #1abc9c 100%);
+    }
+    
+    .ungi-bar.ready {
+      box-shadow: 0 0 15px rgba(46,204,113,0.8);
+    }
+    
+    /* 80% 기준선 */
+    .ungi-threshold {
+      position: absolute;
+      left: 80%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #2ecc71;
+      z-index: 10;
+    }
+    
+    .ungi-threshold::after {
+      content: '80%';
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      color: #2ecc71;
+    }
+    
+    .ungi-status {
+      text-align: center;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    
+    .ungi-status.ready { color: #2ecc71; }
+    .ungi-status.charging { color: #f39c12; }
+    
+    /* 스탯 바 */
+    .stat-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .stat-bar {
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      padding: 6px 8px;
+    }
+    
+    .stat-bar .label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      margin-bottom: 4px;
+    }
+    
+    .stat-bar .track {
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .stat-bar .fill { height: 100%; transition: width 0.3s; }
+    .stat-bar .fill.hp { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+    .stat-bar .fill.ng { background: linear-gradient(90deg, #2980b9, #3498db); }
+    
+    .char-info {
+      margin-top: 10px;
+      padding: 8px;
+      background: rgba(155,89,182,0.1);
+      border-radius: 6px;
+      font-size: 0.7rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+    
+    .info-item span:first-child { color: #888; }
+    .info-item span:last-child { color: #fff; font-weight: bold; }
+    
+    /* 중앙 전투 영역 */
+    .battle-area {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .battle-controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover { transform: scale(1.03); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .btn-start { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; }
+    .btn-stop { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; }
+    .btn-reset { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #aaa; }
+    
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+    
+    .speed-control label { color: #888; }
+    .speed-control select {
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      color: #fff;
+    }
+    
+    /* 전투 로그 */
+    .battle-log-container {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      height: 450px;
+    }
+    
+    .log-header {
+      padding: 10px 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .log-header h3 {
+      color: #ffd700;
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1rem;
+    }
+    
+    .log-stats {
+      display: flex;
+      gap: 10px;
+      font-size: 0.75rem;
+    }
+    
+    .log-stats span {
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    
+    .log-stats .time { background: rgba(155,89,182,0.2); color: #9b59b6; }
+    .log-stats .round { background: rgba(255,215,0,0.2); color: #ffd700; }
+    
+    .log-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-family: 'D2Coding', monospace;
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+    
+    .log-line { margin-bottom: 2px; color: #bbb; }
+    .log-line.attack { color: #e74c3c; }
+    .log-line.defend { color: #3498db; }
+    .log-line.damage { color: #f39c12; }
+    .log-line.naesang { color: #9b59b6; }
+    .log-line.ready { color: #2ecc71; font-weight: bold; }
+    .log-line.info { color: #888; font-style: italic; }
+    .log-line.critical { color: #e74c3c; font-weight: bold; background: rgba(231,76,60,0.1); padding: 2px 4px; border-radius: 3px; }
+    
+    .battle-result {
+      padding: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    
+    .result-text {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.2rem;
+      color: #ffd700;
+    }
+    
+    /* 전투 시각화 */
+    .battle-visual {
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+    }
+    
+    .visual-title {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    
+    .clash-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .fighter {
+      flex: 1;
+      text-align: center;
+    }
+    
+    .fighter-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+    
+    .fighter-name {
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    
+    .fighter-name.ally { color: #e74c3c; }
+    .fighter-name.enemy { color: #3498db; }
+    
+    .vs-icon {
+      font-size: 1.5rem;
+      color: #ffd700;
+      font-weight: bold;
+    }
+    
+    .action-indicator {
+      margin-top: 5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+    
+    .action-indicator.attacking {
+      background: rgba(231,76,60,0.3);
+      color: #e74c3c;
+      animation: pulse 0.5s infinite;
+    }
+    
+    .action-indicator.defending {
+      background: rgba(52,152,219,0.3);
+      color: #3498db;
+    }
+    
+    .action-indicator.charging {
+      background: rgba(243,156,18,0.3);
+      color: #f39c12;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 15px;
+      color: #555;
+      font-size: 0.7rem;
+    }
+    
+    .highlight-red { color: #e74c3c; }
+    .highlight-blue { color: #3498db; }
+    .highlight-gold { color: #ffd700; }
+    .highlight-green { color: #2ecc71; }
+    .highlight-purple { color: #9b59b6; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>S-Engine 戰鬪 試演器</h1>
+      <p class="subtitle">v5.0 - 실시간 운기 시스템 | 운기 80% 이상시 공격 가능</p>
+    </header>
+    
+    <div class="main-layout">
+      <!-- 아군 패널 -->
+      <div class="char-panel ally">
+        <div class="panel-header ally">
+          <h2>⚔️ 아군</h2>
+          <span class="char-status" id="ally-status">대기</span>
+        </div>
+        
+        <div class="char-name ally" id="ally-name">검호</div>
+        
+        <div class="char-config">
+          <div class="config-item">
+            <label>경지</label>
+            <select id="ally-gyeongji" onchange="updateChar('ally')">
+              <option value="삼류">삼류 (√1)</option>
+              <option value="이류">이류 (√2)</option>
+              <option value="일류">일류 (√3)</option>
+              <option value="절정" selected>절정 (√4)</option>
+              <option value="초절정">초절정 (√5)</option>
+              <option value="화경">화경 (√6)</option>
+              <option value="현경">현경 (√7)</option>
+              <option value="생사경">생사경 (√8)</option>
+              <option value="자연경">자연경 (√9)</option>
+            </select>
+          </div>
+          <div class="config-item">
+            <label>심법</label>
+            <select id="ally-simbeop" onchange="updateChar('ally')">
+              <option value="삼재심법">삼재 (10/90)</option>
+              <option value="기초심법">기초 (20/80)</option>
+              <option value="기본심법" selected>기본 (30/70)</option>
+              <option value="심화심법">심화 (40/70)</option>
+              <option value="비전심법">비전 (70/60)</option>
+              <option value="명운심법">명운 (110/80)</option>
+              <option value="천마심공">천마 (130/70)</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 운기 게이지 -->
+        <div class="ungi-section">
+          <div class="ungi-header">
+            <span class="ungi-label">🌀 운기 진행도</span>
+            <span class="ungi-value charging" id="ally-ungi-value">0%</span>
+          </div>
+          <div class="ungi-bar-container">
+            <div class="ungi-threshold"></div>
+            <div class="ungi-bar ally" id="ally-ungi-bar" style="width: 0%"></div>
+          </div>
+          <div class="ungi-status charging" id="ally-ungi-status">운기 충전 중...</div>
+        </div>
+        
+        <div class="stat-bars">
+          <div class="stat-bar">
+            <div class="label">
+              <span>체력</span>
+              <span class="highlight-red" id="ally-hp">100.0</span>
+            </div>
+            <div class="track">
+              <div class="fill hp" id="ally-hp-bar" style="width: 100%"></div>
+            </div>
+          </div>
+          <div class="stat-bar">
+            <div class="label">
+              <span>내공</span>
+              <span class="highlight-blue" id="ally-ng">100.0</span>
+            </div>
+            <div class="track">
+              <div class="fill ng" id="ally-ng-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="char-info">
+          <div class="info-item"><span>공격속도:</span> <span id="ally-atkspd">1.50초</span></div>
+          <div class="info-item"><span>운기경로:</span> <span id="ally-ungi-path">√30</span></div>
+          <div class="info-item"><span>운기위험:</span> <span id="ally-danger">0.12</span></div>
+          <div class="info-item"><span>파괴력:</span> <span id="ally-power">5.48</span></div>
+        </div>
+      </div>
+      
+      <!-- 중앙 전투 영역 -->
+      <div class="battle-area">
+        <div class="battle-visual">
+          <div class="visual-title">⚔️ 전투 상황</div>
+          <div class="clash-display">
+            <div class="fighter">
+              <div class="fighter-icon">🗡️</div>
+              <div class="fighter-name ally">검호</div>
+              <div class="action-indicator charging" id="ally-action">운기 중</div>
+            </div>
+            <div class="vs-icon">⚔️</div>
+            <div class="fighter">
+              <div class="fighter-icon">🛡️</div>
+              <div class="fighter-name enemy">도적</div>
+              <div class="action-indicator charging" id="enemy-action">운기 중</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="battle-controls">
+          <button class="btn btn-start" id="btn-start" onclick="startBattle()">▶️ 전투 시작</button>
+          <button class="btn btn-stop" id="btn-stop" onclick="stopBattle()" style="display:none;">⏹️ 중지</button>
+          <button class="btn btn-reset" onclick="resetBattle()">↺ 초기화</button>
+        </div>
+        
+        <div class="speed-control">
+          <label>⏱️ 시뮬 속도:</label>
+          <select id="sim-speed">
+            <option value="0.5">0.5x (느림)</option>
+            <option value="1" selected>1x (실시간)</option>
+            <option value="2">2x (빠름)</option>
+            <option value="5">5x (고속)</option>
+          </select>
+        </div>
+        
+        <div class="battle-log-container">
+          <div class="log-header">
+            <h3>📜 전투 기록</h3>
+            <div class="log-stats">
+              <span class="time">⏱️ <span id="battle-time">0.0</span>초</span>
+              <span class="round">💥 <span id="attack-count">0</span>회 교전</span>
+            </div>
+          </div>
+          <div class="log-content" id="log-content">
+            <div class="log-line info">전투 시작 버튼을 누르면 실시간 운기가 시작됩니다.</div>
+            <div class="log-line info">운기 80% 이상이 되면 공격이 가능합니다.</div>
+            <div class="log-line info">상대보다 먼저 80%에 도달하면 선공!</div>
+          </div>
+          <div class="battle-result" id="battle-result" style="display: none;">
+            <div class="result-text" id="result-text"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 적군 패널 -->
+      <div class="char-panel enemy">
+        <div class="panel-header enemy">
+          <h2>🛡️ 적군</h2>
+          <span class="char-status" id="enemy-status">대기</span>
+        </div>
+        
+        <div class="char-name enemy" id="enemy-name">도적</div>
+        
+        <div class="char-config">
+          <div class="config-item">
+            <label>경지</label>
+            <select id="enemy-gyeongji" onchange="updateChar('enemy')">
+              <option value="삼류">삼류 (√1)</option>
+              <option value="이류">이류 (√2)</option>
+              <option value="일류" selected>일류 (√3)</option>
+              <option value="절정">절정 (√4)</option>
+              <option value="초절정">초절정 (√5)</option>
+              <option value="화경">화경 (√6)</option>
+              <option value="현경">현경 (√7)</option>
+              <option value="생사경">생사경 (√8)</option>
+              <option value="자연경">자연경 (√9)</option>
+            </select>
+          </div>
+          <div class="config-item">
+            <label>심법</label>
+            <select id="enemy-simbeop" onchange="updateChar('enemy')">
+              <option value="삼재심법">삼재 (10/90)</option>
+              <option value="기초심법" selected>기초 (20/80)</option>
+              <option value="기본심법">기본 (30/70)</option>
+              <option value="심화심법">심화 (40/70)</option>
+              <option value="비전심법">비전 (70/60)</option>
+              <option value="명운심법">명운 (110/80)</option>
+              <option value="천마심공">천마 (130/70)</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- 운기 게이지 -->
+        <div class="ungi-section">
+          <div class="ungi-header">
+            <span class="ungi-label">🌀 운기 진행도</span>
+            <span class="ungi-value charging" id="enemy-ungi-value">0%</span>
+          </div>
+          <div class="ungi-bar-container">
+            <div class="ungi-threshold"></div>
+            <div class="ungi-bar enemy" id="enemy-ungi-bar" style="width: 0%"></div>
+          </div>
+          <div class="ungi-status charging" id="enemy-ungi-status">운기 충전 중...</div>
+        </div>
+        
+        <div class="stat-bars">
+          <div class="stat-bar">
+            <div class="label">
+              <span>체력</span>
+              <span class="highlight-red" id="enemy-hp">100.0</span>
+            </div>
+            <div class="track">
+              <div class="fill hp" id="enemy-hp-bar" style="width: 100%"></div>
+            </div>
+          </div>
+          <div class="stat-bar">
+            <div class="label">
+              <span>내공</span>
+              <span class="highlight-blue" id="enemy-ng">100.0</span>
+            </div>
+            <div class="track">
+              <div class="fill ng" id="enemy-ng-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="char-info">
+          <div class="info-item"><span>공격속도:</span> <span id="enemy-atkspd">1.73초</span></div>
+          <div class="info-item"><span>운기경로:</span> <span id="enemy-ungi-path">√20</span></div>
+          <div class="info-item"><span>운기위험:</span> <span id="enemy-danger">0.11</span></div>
+          <div class="info-item"><span>파괴력:</span> <span id="enemy-power">4.47</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      S-Engine Combat Simulator v5.0 by ShadowK | 실시간 운기 시스템 | 80% 이상 공격 가능
+    </footer>
+  </div>
+  
+  <script>
+    // ===== 데이터 =====
+    const GYEONGJI = {
+      '삼류': { level: 1, speed: Math.sqrt(1) },
+      '이류': { level: 2, speed: Math.sqrt(2) },
+      '일류': { level: 3, speed: Math.sqrt(3) },
+      '절정': { level: 4, speed: Math.sqrt(4) },
+      '초절정': { level: 5, speed: Math.sqrt(5) },
+      '화경': { level: 6, speed: Math.sqrt(6) },
+      '현경': { level: 7, speed: Math.sqrt(7) },
+      '생사경': { level: 8, speed: Math.sqrt(8) },
+      '자연경': { level: 9, speed: Math.sqrt(9) }
+    };
+    
+    const SIMBEOP = {
+      '삼재심법': { chukgi: 10, stab: 90, type: '기본' },
+      '기초심법': { chukgi: 20, stab: 80, type: '기초' },
+      '기본심법': { chukgi: 30, stab: 70, type: '기본' },
+      '심화심법': { chukgi: 40, stab: 70, type: '심화' },
+      '비전심법': { chukgi: 70, stab: 60, type: '비전' },
+      '명운심법': { chukgi: 110, stab: 80, type: '신공Lv1' },
+      '천마심공': { chukgi: 130, stab: 70, type: '신공Lv2' }
+    };
+    
+    const THRESHOLD = { '기초': 40, '기본': 40, '심화': 40, '비전': 35, '신공Lv1': 30, '신공Lv2': 25 };
+    
+    // ===== 게임 상태 =====
+    let state = {
+      running: false,
+      time: 0,
+      attackCount: 0,
+      winner: null,
+      animFrame: null,
+      lastTime: 0,
+      
+      ally: {
+        gyeongji: '절정',
+        simbeop: '기본심법',
+        hp: 100,
+        neigong: 100,
+        ungi: 0,  // 실시간 운기 진행도 (0~100)
+        canAttack: false
+      },
+      
+      enemy: {
+        gyeongji: '일류',
+        simbeop: '기초심법',
+        hp: 100,
+        neigong: 100,
+        ungi: 0,
+        canAttack: false
+      }
+    };
+    
+    // ===== 계산 함수 =====
+    function getCharStats(side) {
+      const char = state[side];
+      const g = GYEONGJI[char.gyeongji];
+      const s = SIMBEOP[char.simbeop];
+      
+      // 공격 시간 (√1 = 3초 기준)
+      const atkTime = 3 / g.speed;
+      
+      // 운기경로 = √축기속도
+      const ungiPath = Math.sqrt(s.chukgi);
+      
+      // 운기위험성 = 1 / √안정성
+      const danger = 1 / Math.sqrt(s.stab);
+      
+      // 운기 충전 속도 (100% 채우는데 걸리는 시간 = 공격시간)
+      // 초당 운기 증가량 = 100 / atkTime
+      const ungiPerSec = 100 / atkTime;
+      
+      // 파괴력 = 운기경로 × (운기진행도/100)
+      const power = ungiPath * (char.ungi / 100);
+      
+      // 전투불능 기준
+      const threshold = THRESHOLD[s.type];
+      const isDead = char.neigong <= threshold || char.hp <= 0;
+      
+      return { g, s, atkTime, ungiPath, danger, ungiPerSec, power, threshold, isDead };
+    }
+    
+    // ===== UI 업데이트 =====
+    function updateUI() {
+      ['ally', 'enemy'].forEach(side => {
+        const char = state[side];
+        const stats = getCharStats(side);
+        
+        // 운기 게이지
+        const ungiBar = document.getElementById(`${side}-ungi-bar`);
+        const ungiValue = document.getElementById(`${side}-ungi-value`);
+        const ungiStatus = document.getElementById(`${side}-ungi-status`);
+        
+        ungiBar.style.width = `${Math.min(100, char.ungi)}%`;
+        ungiValue.textContent = `${char.ungi.toFixed(1)}%`;
+        
+        if (char.ungi >= 80) {
+          ungiBar.classList.add('ready');
+          ungiValue.className = 'ungi-value ready';
+          ungiStatus.className = 'ungi-status ready';
+          ungiStatus.textContent = '⚔️ 공격 가능!';
+        } else {
+          ungiBar.classList.remove('ready');
+          ungiValue.className = 'ungi-value charging';
+          ungiStatus.className = 'ungi-status charging';
+          ungiStatus.textContent = `운기 충전 중... (${(80 - char.ungi).toFixed(1)}% 남음)`;
+        }
+        
+        // 체력/내공
+        document.getElementById(`${side}-hp`).textContent = char.hp.toFixed(1);
+        document.getElementById(`${side}-ng`).textContent = char.neigong.toFixed(1);
+        document.getElementById(`${side}-hp-bar`).style.width = `${Math.max(0, char.hp)}%`;
+        document.getElementById(`${side}-ng-bar`).style.width = `${Math.max(0, char.neigong)}%`;
+        
+        // 정보
+        document.getElementById(`${side}-atkspd`).textContent = `${stats.atkTime.toFixed(2)}초`;
+        document.getElementById(`${side}-ungi-path`).textContent = `√${SIMBEOP[char.simbeop].chukgi}`;
+        document.getElementById(`${side}-danger`).textContent = stats.danger.toFixed(3);
+        document.getElementById(`${side}-power`).textContent = stats.power.toFixed(2);
+        
+        // 액션 인디케이터
+        const action = document.getElementById(`${side}-action`);
+        if (stats.isDead) {
+          action.className = 'action-indicator';
+          action.textContent = '전투불능';
+          action.style.background = 'rgba(231,76,60,0.3)';
+          action.style.color = '#e74c3c';
+        } else if (char.ungi >= 80) {
+          action.className = 'action-indicator attacking';
+          action.textContent = '공격 준비!';
+        } else {
+          action.className = 'action-indicator charging';
+          action.textContent = `운기 ${char.ungi.toFixed(0)}%`;
+        }
+      });
+      
+      // 시간/교전 횟수
+      document.getElementById('battle-time').textContent = state.time.toFixed(1);
+      document.getElementById('attack-count').textContent = state.attackCount;
+    }
+    
+    function updateChar(side) {
+      state[side].gyeongji = document.getElementById(`${side}-gyeongji`).value;
+      state[side].simbeop = document.getElementById(`${side}-simbeop`).value;
+      updateUI();
+    }
+    
+    // ===== 로그 =====
+    function addLog(text, cls = '') {
+      const el = document.getElementById('log-content');
+      const line = document.createElement('div');
+      line.className = `log-line ${cls}`;
+      line.textContent = `[${state.time.toFixed(2)}초] ${text}`;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+    
+    // ===== 전투 로직 =====
+    function processAttack(attacker, defender) {
+      const atkStats = getCharStats(attacker);
+      const defStats = getCharStats(defender);
+      const atkChar = state[attacker];
+      const defChar = state[defender];
+      
+      const atkName = attacker === 'ally' ? '검호' : '도적';
+      const defName = defender === 'ally' ? '검호' : '도적';
+      
+      state.attackCount++;
+      
+      // 공격자 운기 진행도
+      const atkUngi = atkChar.ungi;
+      const atkRemain = 100 - atkUngi;
+      
+      // 방어자 운기 진행도 (피격 시점)
+      const defUngi = defChar.ungi;
+      const defRemain = 100 - defUngi;
+      
+      addLog(`━━━ 제 ${state.attackCount}합 ━━━`, 'ready');
+      addLog(`${atkName} 운기 ${atkUngi.toFixed(1)}%로 공격!`, 'attack');
+      addLog(`${defName} 운기 ${defUngi.toFixed(1)}%에서 피격!`, 'defend');
+      
+      // 공격자 내상 (100% 미달 시)
+      if (atkUngi < 100) {
+        const atkNaesang = atkRemain * atkStats.danger;
+        atkChar.hp -= atkNaesang * 0.1;
+        atkChar.neigong -= atkNaesang * 0.9;
+        if (atkNaesang > 0.5) {
+          addLog(`  ${atkName} 운기 미완성 내상: -${atkNaesang.toFixed(2)}`, 'naesang');
+        }
+      }
+      
+      // 방어자 내상 (피격으로 운기 끊김)
+      const defNaesang = defRemain * defStats.danger;
+      defChar.hp -= defNaesang * 0.1;
+      defChar.neigong -= defNaesang * 0.9;
+      if (defNaesang > 0.5) {
+        addLog(`  ${defName} 운기 끊김 내상: -${defNaesang.toFixed(2)}`, 'naesang');
+      }
+      
+      // 경지 차이 보정
+      const levelDiff = atkStats.g.level - defStats.g.level;
+      let modifier = 1;
+      if (levelDiff < 0) {
+        modifier = 1 + (levelDiff * 0.03);  // 하위가 공격 시 페널티
+      }
+      
+      // 피해 계산
+      const damage = atkStats.power * 10 * modifier;
+      const hpDmg = damage * 0.2;
+      const ngDmg = damage * 0.8;
+      
+      defChar.hp -= hpDmg;
+      defChar.neigong -= ngDmg;
+      
+      addLog(`  피해: 체력 -${hpDmg.toFixed(1)}, 내공 -${ngDmg.toFixed(1)}`, 'damage');
+      
+      // 최소값 보정
+      atkChar.hp = Math.max(0, atkChar.hp);
+      atkChar.neigong = Math.max(0, atkChar.neigong);
+      defChar.hp = Math.max(0, defChar.hp);
+      defChar.neigong = Math.max(0, defChar.neigong);
+      
+      // 운기 리셋
+      atkChar.ungi = 0;
+      defChar.ungi = 0;
+      
+      // 전투불능 체크
+      const newDefStats = getCharStats(defender);
+      if (newDefStats.isDead) {
+        addLog(`💀 ${defName} 전투불능!`, 'critical');
+        state.winner = attacker;
+      }
+      
+      const newAtkStats = getCharStats(attacker);
+      if (newAtkStats.isDead && !state.winner) {
+        addLog(`💀 ${atkName} 전투불능! (내상)`, 'critical');
+        state.winner = defender;
+      }
+    }
+    
+    // ===== 메인 루프 =====
+    function gameLoop(timestamp) {
+      if (!state.running) return;
+      
+      const speed = parseFloat(document.getElementById('sim-speed').value);
+      
+      if (state.lastTime === 0) {
+        state.lastTime = timestamp;
+      }
+      
+      const delta = (timestamp - state.lastTime) / 1000 * speed;  // 초 단위
+      state.lastTime = timestamp;
+      state.time += delta;
+      
+      // 운기 충전
+      const allyStats = getCharStats('ally');
+      const enemyStats = getCharStats('enemy');
+      
+      if (!allyStats.isDead) {
+        state.ally.ungi += allyStats.ungiPerSec * delta;
+        state.ally.ungi = Math.min(100, state.ally.ungi);
+      }
+      
+      if (!enemyStats.isDead) {
+        state.enemy.ungi += enemyStats.ungiPerSec * delta;
+        state.enemy.ungi = Math.min(100, state.enemy.ungi);
+      }
+      
+      // 공격 체크 (80% 이상이면 공격 가능)
+      const allyCanAttack = state.ally.ungi >= 80 && !allyStats.isDead;
+      const enemyCanAttack = state.enemy.ungi >= 80 && !enemyStats.isDead;
+      
+      // 둘 다 공격 가능하면 먼저 80% 도달한 쪽이 선공
+      // (실제로는 운기 진행도가 높은 쪽이 선공)
+      if (allyCanAttack && enemyCanAttack) {
+        if (state.ally.ungi >= state.enemy.ungi) {
+          processAttack('ally', 'enemy');
+        } else {
+          processAttack('enemy', 'ally');
+        }
+      } else if (allyCanAttack && !enemyCanAttack) {
+        processAttack('ally', 'enemy');
+      } else if (enemyCanAttack && !allyCanAttack) {
+        processAttack('enemy', 'ally');
+      }
+      
+      updateUI();
+      
+      // 승패 체크
+      if (state.winner) {
+        endBattle();
+        return;
+      }
+      
+      state.animFrame = requestAnimationFrame(gameLoop);
+    }
+    
+    // ===== 전투 컨트롤 =====
+    function startBattle() {
+      if (state.running) return;
+      
+      state.running = true;
+      state.lastTime = 0;
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-stop').style.display = 'inline-block';
+      
+      // 설정 잠금
+      document.querySelectorAll('.char-config select').forEach(el => el.disabled = true);
+      
+      if (state.time === 0) {
+        document.getElementById('log-content').innerHTML = '';
+        addLog('전투 시작! 운기를 모아 공격하라!', 'ready');
+      }
+      
+      state.animFrame = requestAnimationFrame(gameLoop);
+    }
+    
+    function stopBattle() {
+      state.running = false;
+      state.lastTime = 0;
+      
+      if (state.animFrame) {
+        cancelAnimationFrame(state.animFrame);
+      }
+      
+      document.getElementById('btn-start').style.display = 'inline-block';
+      document.getElementById('btn-stop').style.display = 'none';
+      
+      addLog('전투 일시정지', 'info');
+    }
+    
+    function endBattle() {
+      state.running = false;
+      
+      if (state.animFrame) {
+        cancelAnimationFrame(state.animFrame);
+      }
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-stop').style.display = 'none';
+      
+      const winnerName = state.winner === 'ally' ? '검호' : '도적';
+      const resultText = `🏆 ${winnerName} 승리! (${state.time.toFixed(1)}초, ${state.attackCount}합)`;
+      
+      document.getElementById('battle-result').style.display = 'block';
+      document.getElementById('result-text').textContent = resultText;
+      
+      addLog('━━━━━━━━━━━━━━━', '');
+      addLog(resultText, 'ready');
+    }
+    
+    function resetBattle() {
+      stopBattle();
+      
+      state.time = 0;
+      state.attackCount = 0;
+      state.winner = null;
+      
+      state.ally.hp = 100;
+      state.ally.neigong = 100;
+      state.ally.ungi = 0;
+      
+      state.enemy.hp = 100;
+      state.enemy.neigong = 100;
+      state.enemy.ungi = 0;
+      
+      document.getElementById('btn-start').style.display = 'inline-block';
+      document.getElementById('btn-stop').style.display = 'none';
+      document.getElementById('battle-result').style.display = 'none';
+      
+      // 설정 잠금 해제
+      document.querySelectorAll('.char-config select').forEach(el => el.disabled = false);
+      
+      document.getElementById('log-content').innerHTML = `
+        <div class="log-line info">전투 시작 버튼을 누르면 실시간 운기가 시작됩니다.</div>
+        <div class="log-line info">운기 80% 이상이 되면 공격이 가능합니다.</div>
+        <div class="log-line info">상대보다 먼저 80%에 도달하면 선공!</div>
+      `;
+      
+      updateUI();
+    }
+    
+    // ===== 초기화 =====
+    updateUI();
+  </script>
+</body>
+</html>
