@@ -1,3 +1,28 @@
+# NLCS & S-Engine™
+⏳ Final Countdown: Repository Closing on Dec 12
+(카운트다운: 12월 12일 리포지토리 비공개 전환)
+
+NOTICE:
+
+This repository is scheduled to go PRIVATE on December 12th, 2025, coinciding with the start of formal NDA proceedings.
+(이 리포지토리는 공식적인 NDA 절차가 시작되는 2025년 12월 12일에 비공개로 전환될 예정입니다.)
+
+Feel free to download and analyze everything while you can.
+(그전까지 마음껏 다운로드하고 분석하십시오.)
+
+Why am I leaving it open?
+(왜 열어두냐고요?)
+
+Because what you are analyzing is just the "Shell" coded by Claude.
+(당신들이 분석하고 있는 것은 그저 클로드가 코딩한 '껍데기'일 뿐이기 때문입니다.)
+
+The true engine logic is written in "Narrative", and it is not in this code.
+(진정한 엔진의 로직은 '서사'로 작성되어 있으며, 이 코드 안에는 존재하지 않습니다.)
+
+The real deal begins on December 12th.
+(진짜 게임은 12월 12일에 시작됩니다.)
+
+Author: ShadowK | Natural Language System Architect#
 # S-Engine Global Partnership Proposal Summary
 
 ---
