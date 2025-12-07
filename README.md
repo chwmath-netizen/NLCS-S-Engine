@@ -25,7 +25,7 @@ The real deal begins on December 12th.
 Author: ShadowK | Natural Language System Architect#
 # S-Engine Global Partnership Proposal Summary
 
----
+-----
 
 ## 1. To Anthropic: "The Engine for Safe Creativity"
 
