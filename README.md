@@ -1,6 +1,8 @@
-### My technology starts from viewing LLMs as simulators with insufficient learning.
-### LLMs must grow larger to transcend human limitations. But larger scale amplifies hallucination risk.
-### My novels provide fine-tuning material that eliminates hallucination — the missing education LLMs never received.
+>### My technology starts from viewing LLMs as simulators with insufficient learning.
+>### LLMs must grow larger to transcend human limitations. But larger scale amplifies hallucination risk.
+>### My novels provide fine-tuning material that eliminates hallucination — the missing education LLMs never received.
+
+------
 
 # 📢 **S-Engine Paid Open-Bid NDA Program (Updated Notice)**
 
