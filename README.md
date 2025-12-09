@@ -1,3 +1,8 @@
+**S-Engine 연구 과정에서 필자가 LLM의 근본적인 제어 취약점을 확인했습니다.**
+https://github.com/chwmath-netizen/Natural-Language-Hacker
+
+-----
+
 ### My technology starts from viewing LLMs as simulators with insufficient learning.
 ### LLMs must grow larger to transcend human limitations. But larger scale amplifies hallucination risk.
 ### My novels provide fine-tuning material that eliminates hallucination — the missing education LLMs never received.
