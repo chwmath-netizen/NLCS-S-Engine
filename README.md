@@ -2,6 +2,12 @@
 
 https://github.com/chwmath-netizen/Natural-Language-Hacker
 
+12월 12일 레포에는 공지글만 남깁니다. 이후 모든 연구는 취약점 연구에 집중할 계획입니다.
+
+현재는 취약점을 보완하는 연구를 진행중인데... 다들 관심이 없으신 것 같네요.
+
+그렇다면 창과 방패 논리로 게임을 해보죠.
+
 -----
 
 ### My technology starts from viewing LLMs as simulators with insufficient learning.
