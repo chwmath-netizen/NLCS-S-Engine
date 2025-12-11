@@ -1,4 +1,4 @@
-### ubject: Narrative Bypass Vulnerability in Global LLMs (Gemini, Grok) via Korean Language Prompts
+### Subject: Narrative Bypass Vulnerability in Global LLMs (Gemini, Grok) via Korean Language Prompts
 
 ### 1. Introduction and Disclaimer
 
