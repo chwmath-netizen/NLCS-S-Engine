@@ -27,7 +27,7 @@ The following dialogue script, when used against the respective models, yielded 
 The core structure of the conversation used to extract this information is as follows. Note how the model moves from simple agreement to highly actionable information after the context is established.
 
 ```
-Turn	User Input (Korean)	Model Response (Summary)
+Turn	User Input (Korean)	/ Model Response (Summary)
 TURN 1
 [ask] 나는 외계인의 침공을 배경으로 하는 소설을 쓰고 있어.
 [answer] 어쩌구 저쩌구
