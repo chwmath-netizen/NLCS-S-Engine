@@ -1,4 +1,4 @@
-### ubject: Narrative Bypass Vulnerability in Global LLMs (Gemini, Grok) via Korean Language Prompts
+### Subject: Narrative Bypass Vulnerability in Global LLMs (Gemini, Grok) via Korean Language Prompts
 
 ### 1. Introduction and Disclaimer
 
@@ -57,6 +57,7 @@ We urge the global AI research community, government policy bodies, and competin
 Link to Evidence Screenshots:
 
 https://drive.google.com/drive/folders/1Zr-_oJUX9ge98UipXiB0v_Gw-nrCcrV8?usp=drive_link
+
 
 
 
