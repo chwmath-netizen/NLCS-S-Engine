@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S-Engine Magic Combat Simulator v10.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+      color: #e0e0e0;
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      padding: 10px 8px;
+      font-size: 12px;
+    }
+    
+    .container { max-width: 1700px; margin: 0 auto; }
+    
+    header { text-align: center; margin-bottom: 10px; }
+    
+    h1 {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, #ffd700 0%, #ff6b35 50%, #ffd700 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle { color: #888; font-size: 0.7rem; }
+    
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+    
+    @media (max-width: 1500px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .team { flex-direction: row !important; flex-wrap: wrap; justify-content: center; }
+      .char-card { width: 280px; }
+    }
+    
+    /* Team Area */
+    .team {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .team-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+    
+    .team-header.ally { background: rgba(231,76,60,0.12); border: 1px solid rgba(231,76,60,0.25); }
+    .team-header.enemy { background: rgba(52,152,219,0.12); border: 1px solid rgba(52,152,219,0.25); }
+    
+    .team-header h2 { font-family: 'Noto Serif KR', serif; font-size: 0.95rem; }
+    .team-header.ally h2 { color: #e74c3c; }
+    .team-header.enemy h2 { color: #3498db; }
+    
+    .btn-add {
+      padding: 3px 10px;
+      font-size: 0.7rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      color: #aaa;
+      cursor: pointer;
+    }
+    .btn-add:hover { background: rgba(255,255,255,0.15); }
+    .btn-add:disabled { opacity: 0.3; cursor: not-allowed; }
+    
+    /* Character Card */
+    .char-card {
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      padding: 8px;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .char-card.ally { border-left: 3px solid rgba(231,76,60,0.5); }
+    .char-card.enemy { border-left: 3px solid rgba(52,152,219,0.5); }
+    .char-card.dead { opacity: 0.35; filter: grayscale(0.7); }
+    .char-card.waiting { opacity: 0.7; border: 2px dashed #f39c12; }
+    .char-card.active { box-shadow: 0 0 12px rgba(255,215,0,0.4); }
+    
+    .btn-remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      font-size: 11px;
+      line-height: 14px;
+      background: rgba(255,0,0,0.15);
+      border: 1px solid rgba(255,0,0,0.25);
+      border-radius: 50%;
+      color: #e74c3c;
+      cursor: pointer;
+    }
+    
+    .btn-join {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      padding: 3px 8px;
+      font-size: 0.65rem;
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      animation: pulse 1s infinite;
+    }
+    
+    .btn-join:hover { transform: scale(1.05); }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 5px rgba(243, 156, 18, 0.5); }
+      50% { box-shadow: 0 0 15px rgba(243, 156, 18, 0.8); }
+    }
+    
+    .char-status.waiting { background: rgba(243, 156, 18, 0.2); color: #f39c12; }
+    
+    .char-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    
+    .char-header input {
+      flex: 1;
+      padding: 3px 6px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    
+    .char-status {
+      font-size: 0.6rem;
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+    
+    .char-status.alive { background: rgba(46,204,113,0.2); color: #2ecc71; }
+    .char-status.dead { background: rgba(231,76,60,0.2); color: #e74c3c; }
+    
+    /* Settings Grid */
+    .config-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-bottom: 5px;
+    }
+    
+    .config-row.three-col { grid-template-columns: repeat(3, 1fr); }
+    
+    .config-item label {
+      display: block;
+      font-size: 0.55rem;
+      color: #777;
+      margin-bottom: 1px;
+    }
+    
+    .config-item select {
+      width: 100%;
+      padding: 2px 3px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      color: #fff;
+      font-size: 0.65rem;
+    }
+    
+    /* Cast Gauge */
+    .ungi-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 5px;
+    }
+    
+    .ungi-label { font-size: 0.65rem; color: #ffd700; min-width: 22px; }
+    
+    .ungi-bar-wrap {
+      flex: 1;
+      position: relative;
+      height: 12px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    
+    .ungi-bar {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.05s linear;
+    }
+    
+    .ungi-bar.ally { background: linear-gradient(90deg, #c0392b, #e74c3c, #f39c12); }
+    .ungi-bar.enemy { background: linear-gradient(90deg, #2980b9, #3498db, #1abc9c); }
+    .ungi-bar.ready { box-shadow: 0 0 8px rgba(46,204,113,0.7); }
+    
+    .ungi-threshold {
+      position: absolute;
+      left: 80%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: #2ecc71;
+    }
+    
+    .ungi-value {
+      font-size: 0.65rem;
+      font-weight: bold;
+      min-width: 32px;
+      text-align: right;
+    }
+    
+    .ungi-value.ready { color: #2ecc71; }
+    .ungi-value.charging { color: #f39c12; }
+    
+    /* Stat Bar */
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 5px;
+    }
+    
+    .stat-item {
+      background: rgba(0,0,0,0.2);
+      border-radius: 3px;
+      padding: 3px 5px;
+    }
+    
+    .stat-item .label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.55rem;
+      margin-bottom: 2px;
+    }
+    
+    .stat-item .track {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .stat-item .fill { height: 100%; }
+    .stat-item .fill.hp { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+    .stat-item .fill.ng { background: linear-gradient(90deg, #2980b9, #3498db); }
+    
+    /* Potion */
+    .potion-row {
+      display: flex;
+      gap: 8px;
+      font-size: 0.6rem;
+      margin-bottom: 4px;
+    }
+    
+    .potion-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .potion-count {
+      padding: 1px 4px;
+      background: rgba(46,204,113,0.2);
+      border-radius: 2px;
+      color: #2ecc71;
+      min-width: 14px;
+      text-align: center;
+    }
+    
+    .potion-count.empty { background: rgba(231,76,60,0.2); color: #e74c3c; }
+    
+    .potion-input {
+      width: 30px;
+      padding: 1px 2px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      color: #fff;
+      font-size: 0.6rem;
+    }
+    
+    /* Current Action */
+    .action-row {
+      padding: 4px;
+      background: rgba(155,89,182,0.1);
+      border-radius: 3px;
+      font-size: 0.6rem;
+      text-align: center;
+      min-height: 18px;
+    }
+    
+    .action-row.attack { color: #e74c3c; font-weight: bold; }
+    .action-row.defend { color: #3498db; }
+    .action-row.move { color: #f39c12; }
+    .action-row.potion { color: #2ecc71; }
+    
+    /* Battle Area */
+    .battle-area { display: flex; flex-direction: column; gap: 8px; }
+    
+    .battle-controls {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover { transform: scale(1.03); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .btn-start { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; }
+    .btn-stop { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; }
+    .btn-reset { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #aaa; }
+    .btn-export { background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; }
+    
+    .options-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .settings-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+    }
+    
+    .section-label {
+      font-size: 0.7rem;
+      color: #ffd700;
+      font-weight: bold;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255,215,0,0.2);
+    }
+    
+    .option-box {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      font-size: 0.65rem;
+    }
+    
+    .option-box label { color: #888; }
+    .option-box select {
+      padding: 2px 4px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 3px;
+      color: #fff;
+      font-size: 0.65rem;
+    }
+    
+    /* Battle Log */
+    .battle-log-container {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      height: 420px;
+    }
+    
+    .log-header {
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .log-header h3 {
+      color: #ffd700;
+      font-family: 'Noto Serif KR', serif;
+      font-size: 0.85rem;
+    }
+    
+    .log-stats {
+      display: flex;
+      gap: 6px;
+      font-size: 0.6rem;
+    }
+    
+    .log-stats span { padding: 2px 5px; border-radius: 3px; }
+    .log-stats .time { background: rgba(155,89,182,0.2); color: #9b59b6; }
+    .log-stats .round { background: rgba(255,215,0,0.2); color: #ffd700; }
+    .log-stats .potion { background: rgba(46,204,113,0.2); color: #2ecc71; }
+    
+    .log-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      font-family: 'D2Coding', monospace;
+      font-size: 0.65rem;
+      line-height: 1.4;
+    }
+    
+    .log-line { margin-bottom: 1px; color: #bbb; }
+    .log-line.move { color: #f39c12; }
+    .log-line.stun { color: #e67e22; font-style: italic; }
+    .log-line.attack { color: #e74c3c; font-weight: bold; }
+    .log-line.defend { color: #3498db; }
+    .log-line.damage { color: #ff6b6b; }
+    .log-line.naesang { color: #9b59b6; font-style: italic; }
+    .log-line.combo { color: #ffd700; }
+    .log-line.ready { color: #2ecc71; font-weight: bold; }
+    .log-line.info { color: #888; font-style: italic; }
+    .log-line.potion { color: #2ecc71; }
+    .log-line.critical { color: #e74c3c; font-weight: bold; background: rgba(231,76,60,0.1); padding: 1px 3px; border-radius: 2px; }
+    .log-line.divider { color: #555; text-align: center; }
+    .log-line.mugong { color: #9b59b6; font-weight: bold; }
+    
+    .battle-result {
+      padding: 8px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    
+    .result-text {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 1rem;
+      color: #ffd700;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 10px;
+      color: #555;
+      font-size: 0.6rem;
+    }
+    
+    .highlight-red { color: #e74c3c; }
+    .highlight-blue { color: #3498db; }
+    .highlight-gold { color: #ffd700; }
+    .highlight-green { color: #2ecc71; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>S-Engine Magic Combat Simulator</h1>
+      <p class="subtitle">v10.0 - Fantasy Edition</p></p>
+    </header>
+    
+    <div class="main-layout">
+      <!-- Allies  -->
+      <div class="team" id="ally-team">
+        <div class="team-header ally">
+          <h2>⚔️ Allies</h2>
+          <button class="btn-add" id="ally-add-btn" onclick="addCharacter('ally')">+ Add</button>
+        </div>
+        <div id="ally-chars"></div>
+      </div>
+      
+      <!-- Battle Area -->
+      <div class="battle-area">
+        <div class="battle-controls">
+          <button class="btn btn-start" id="btn-start" onclick="startBattle()">▶️ Start Battle</button>
+          <button class="btn btn-stop" id="btn-stop" onclick="stopBattle()" style="display:none;">⏹️ Stop</button>
+          <button class="btn btn-reset" onclick="resetBattle()">↺ Reset</button>
+          <button class="btn btn-export" onclick="exportSettings()">📋 Export</button>
+        </div>
+        
+        <!-- [Settings] -->
+        <div class="settings-section">
+          <div class="section-label">⚙️ Settings</div>
+          <div class="options-row">
+            <div class="option-box">
+              <label>⏱️ Sim Speed</label>
+              <select id="sim-speed">
+                <option value="1" selected>1x</option>
+                <option value="2">2x</option>
+                <option value="3">3x</option>
+                <option value="4">4x</option>
+                <option value="5">5x</option>
+                <option value="6">6x</option>
+                <option value="7">7x</option>
+                <option value="8">8x</option>
+                <option value="9">9x</option>
+                <option value="10">10x</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>🌀 Cast Speed</label>
+              <select id="ungi-multiplier">
+                <option value="3" selected>3x</option>
+                <option value="3.5">3.5x</option>
+                <option value="4">4x</option>
+                <option value="4.5">4.5x</option>
+                <option value="5">5x</option>
+                <option value="5.5">5.5x</option>
+                <option value="6">6x</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>⚔️ Battle Mode</label>
+              <select id="battle-mode">
+                <option value="simultaneous">Simultaneous</option>
+                <option value="sequential">Sequential</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>🎯 Target</label>
+              <select id="targeting-mode">
+                <option value="weakest">Weakest</option>
+                <option value="strongest">Strongest</option>
+                <option value="random">Random</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>⚔️ Spell Mode</label>
+              <select id="mugong-response">
+                <option value="max">Max</option>
+                <option value="match" selected>Match</option>
+                <option value="save">Save</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- [Potion Settings] -->
+        <div class="settings-section">
+          <div class="section-label">💊 Potion Settings</div>
+          <div class="options-row">
+            <div class="option-box">
+              <label>❤️ HP Recovery</label>
+              <select id="potion-heal-hp">
+                <option value="10">10%</option>
+                <option value="15" selected>15%</option>
+                <option value="20">20%</option>
+                <option value="25">25%</option>
+                <option value="30">30%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>💙 Mana Recovery</label>
+              <select id="potion-heal-ng">
+                <option value="10">10%</option>
+                <option value="15" selected>15%</option>
+                <option value="20">20%</option>
+                <option value="25">25%</option>
+                <option value="30">30%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>❤️ HP Auto</label>
+              <select id="hp-threshold">
+                <option value="60">60%</option>
+                <option value="65">65%</option>
+                <option value="70">70%</option>
+                <option value="75" selected>75%</option>
+                <option value="80">80%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>💙 Mana Auto</label>
+              <select id="ng-threshold">
+                <option value="60">60%</option>
+                <option value="65">65%</option>
+                <option value="70">70%</option>
+                <option value="75" selected>75%</option>
+                <option value="80">80%</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- [Incapacitation / Hit Penalty] -->
+        <div class="settings-section">
+          <div class="section-label">💀 Incapacitation / Hit Penalty</div>
+          <div class="options-row">
+            <div class="option-box">
+              <label>❤️ HP KO</label>
+              <select id="hp-dead-threshold">
+                <option value="20">20%</option>
+                <option value="25">25%</option>
+                <option value="30" selected>30%</option>
+                <option value="35">35%</option>
+                <option value="40">40%</option>
+                <option value="45">45%</option>
+                <option value="50">50%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>💙 Mana KO</label>
+              <select id="ng-dead-threshold">
+                <option value="20">20%</option>
+                <option value="25">25%</option>
+                <option value="30" selected>30%</option>
+                <option value="35">35%</option>
+                <option value="40">40%</option>
+                <option value="45">45%</option>
+                <option value="50">50%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>💙 Mana Hit</label>
+              <select id="miss-ng-threshold">
+                <option value="40">40%</option>
+                <option value="50" selected>50%</option>
+                <option value="60">60%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>❤️ HP Hit</label>
+              <select id="hp-penalty-threshold">
+                <option value="70">70%</option>
+                <option value="80" selected>80%</option>
+                <option value="90">90%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>📉 Penalty(Init)</label>
+              <select id="hp-penalty-init">
+                <option value="1">1%</option>
+                <option value="2">2%</option>
+                <option value="3" selected>3%</option>
+                <option value="4">4%</option>
+                <option value="5">5%</option>
+                <option value="6">6%</option>
+                <option value="7">7%</option>
+                <option value="8">8%</option>
+                <option value="9">9%</option>
+                <option value="10">10%</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>📉 Penalty(1%per)</label>
+              <select id="hp-penalty-rate">
+                <option value="1" selected>1%</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- [Stat Multipliers] -->
+        <div class="settings-section">
+          <div class="section-label">📊 Stat Multipliers</div>
+          <div class="options-row">
+            <div class="option-box">
+              <label>💙 Mana</label>
+              <select id="mult-neigong">
+                <option value="50">50x</option>
+                <option value="100" selected>100x</option>
+                <option value="150">150x</option>
+                <option value="200">200x</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>❤️ HP</label>
+              <select id="mult-hp">
+                <option value="30">30x</option>
+                <option value="50" selected>50x</option>
+                <option value="70">70x</option>
+                <option value="100">100x</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>⚔️ Spell Cost</label>
+              <select id="mult-skill">
+                <option value="10">10x</option>
+                <option value="20">20x</option>
+                <option value="30" selected>30x</option>
+                <option value="50">50x</option>
+              </select>
+            </div>
+            <div class="option-box">
+              <label>💥 Damage Split</label>
+              <select id="damage-split">
+                <option value="10-90">Mana10/HP90</option>
+                <option value="20-80">Mana20/HP80</option>
+                <option value="30-70">Mana30/HP70</option>
+                <option value="40-60">Mana40/HP60</option>
+                <option value="50-50">Mana50/HP50</option>
+                <option value="60-40">Mana60/HP40</option>
+                <option value="70-30">Mana70/HP30</option>
+                <option value="80-20">Mana80/HP20</option>
+                <option value="90-10" selected>Mana90/HP10</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="battle-log-container">
+          <div class="log-header">
+            <h3>📜 Battle Log</h3>
+            <div class="log-stats">
+              <span class="time">⏱️ <span id="battle-time">0.0</span>s</span>
+              <span class="round">💥 <span id="attack-count">0</span>rounds</span>
+              <span class="potion">💊 <span id="potion-used">0</span></span>
+            </div>
+          </div>
+          <div class="log-content" id="log-content">
+            <div class="log-line info">Place characters and start battle.</div>
+            <div class="log-line info">Up to 3 vs 3 battles supported.</div>
+          </div>
+          <div class="battle-result" id="battle-result" style="display: none;">
+            <div class="result-text" id="result-text"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Enemies  -->
+      <div class="team" id="enemy-team">
+        <div class="team-header enemy">
+          <h2>🛡️ Enemies</h2>
+          <button class="btn-add" id="enemy-add-btn" onclick="addCharacter('enemy')">+ Add</button>
+        </div>
+        <div id="enemy-chars"></div>
+      </div>
+    </div>
+    
+    <footer>
+      S-Engine Combat Simulator v10.0 Real-time Combat by ShadowK | NLCS Natural Language Engine
+    </footer>
+  </div>
+  
+  <script>
+    // ===== data =====
+    const GYEONGJI = {
+      '1-Circle': { level: 1, speed: Math.sqrt(1), neigong: 5 },      // 5
+      '2-Circle': { level: 2, speed: Math.sqrt(2), neigong: 10 },     // 10
+      '3-Circle': { level: 3, speed: Math.sqrt(3), neigong: 30 },     // 30
+      '4-Circle': { level: 4, speed: Math.sqrt(4), neigong: 60 },     // 60 (60y cycle)
+      '5-Circle': { level: 5, speed: Math.sqrt(5), neigong: 120 },  // 120 (120y cycle)
+      '6-Circle': { level: 6, speed: Math.sqrt(6), neigong: 180 },    // 180 (180y cycle)
+      '7-Circle': { level: 7, speed: Math.sqrt(7), neigong: 240 },    // 240 (240y cycle)
+      '8-Circle': { level: 8, speed: Math.sqrt(8), neigong: 300 },  // 300
+      '9-Circle': { level: 9, speed: Math.sqrt(9), neigong: 360 }   // 360
+    };
+    
+    const SIMBEOP = {
+      'Basic Grimoire': { chukgi: 10, stab: 90, type: 'basic', tier: 0 },
+      'Standard Grimoire': { chukgi: 20, stab: 80, type: 'standard', tier: 1 },
+      'Advanced Grimoire': { chukgi: 30, stab: 70, type: 'advanced', tier: 2 },
+      'Superior Grimoire': { chukgi: 40, stab: 70, type: 'superior', tier: 3 },
+      'Arcane Grimoire': { chukgi: 70, stab: 60, type: 'arcane', tier: 4 },
+      'Forbidden Tome': { chukgi: 110, stab: 80, type: 'forbidden1', tier: 5 },
+      'Necronomicon': { chukgi: 130, stab: 70, type: 'forbidden2', tier: 5 },
+      'Celestial Codex': { chukgi: 120, stab: 80, type: 'forbidden2', tier: 5 }
+    };
+    
+    const THRESHOLD = { 'basic': 50, 'standard': 50, 'advanced': 45, 'superior': 40, 'arcane': 35, 'forbidden1': 30, 'forbidden2': 25 };
+    
+    const MUGONG = {
+      'Magic Missile': { 1: [2,1], 2: [4,1], 3: [6,1], 4: [8,1], 5: [10,1] },
+      'Fireball': { 1: [6,2], 2: [9,2], 3: [12,2], 4: [15,2], 5: [18,2] },
+      'Meteor': { 1: [15,3], 2: [19,3], 3: [23,3], 4: [28,3], 5: [33,3] }
+    };
+    
+    const BALCHUL = {
+      'None': { bonus: 0, cost: 0 },
+      'Overcharge': { bonus: 8, cost: 2 },
+      'Quick Overcharge': { bonus: 12, cost: 3 },
+      'Maximize': { bonus: 18, cost: 4 },
+      'Empower Maximize': { bonus: 25, cost: 5 }
+    };
+    
+    // Circle-based available Spell/Enhancement limit
+    const MUGONG_LIMIT = {
+      '1-Circle':   { 'Magic Missile': 1, 'Fireball': 0, 'Meteor': 0 },
+      '2-Circle':   { 'Magic Missile': 2, 'Fireball': 1, 'Meteor': 0 },
+      '3-Circle':   { 'Magic Missile': 3, 'Fireball': 2, 'Meteor': 0 },
+      '4-Circle':   { 'Magic Missile': 4, 'Fireball': 3, 'Meteor': 1 },
+      '5-Circle': { 'Magic Missile': 5, 'Fireball': 4, 'Meteor': 2 },
+      '6-Circle':   { 'Magic Missile': 5, 'Fireball': 5, 'Meteor': 3 },
+      '7-Circle':   { 'Magic Missile': 5, 'Fireball': 5, 'Meteor': 4 },
+      '8-Circle': { 'Magic Missile': 5, 'Fireball': 5, 'Meteor': 5 },
+      '9-Circle': { 'Magic Missile': 5, 'Fireball': 5, 'Meteor': 5 }
+    };
+    
+    const BALCHUL_LIMIT = {
+      '1-Circle':   { 'None': true, 'Overcharge': false, 'Quick Overcharge': false, 'Maximize': false, 'Empower Maximize': false },
+      '2-Circle':   { 'None': true, 'Overcharge': false, 'Quick Overcharge': false, 'Maximize': false, 'Empower Maximize': false },
+      '3-Circle':   { 'None': true, 'Overcharge': 1, 'Quick Overcharge': false, 'Maximize': false, 'Empower Maximize': false },
+      '4-Circle':   { 'None': true, 'Overcharge': 2, 'Quick Overcharge': 1, 'Maximize': false, 'Empower Maximize': false },
+      '5-Circle': { 'None': true, 'Overcharge': 3, 'Quick Overcharge': 3, 'Maximize': 1, 'Empower Maximize': false },
+      '6-Circle':   { 'None': true, 'Overcharge': 5, 'Quick Overcharge': 4, 'Maximize': 2, 'Empower Maximize': 1 },
+      '7-Circle':   { 'None': true, 'Overcharge': 5, 'Quick Overcharge': 5, 'Maximize': 3, 'Empower Maximize': 2 },
+      '8-Circle': { 'None': true, 'Overcharge': 5, 'Quick Overcharge': 5, 'Maximize': 4, 'Empower Maximize': 4 },
+      '9-Circle': { 'None': true, 'Overcharge': 5, 'Quick Overcharge': 5, 'Maximize': 5, 'Empower Maximize': 5 }
+    };
+    
+    // Circle-based Grimoire limit
+    const SIMBEOP_LIMIT = {
+      '1-Circle':   ['Basic Grimoire', 'Standard Grimoire'],
+      '2-Circle':   ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire'],
+      '3-Circle':   ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire', 'Superior Grimoire'],
+      '4-Circle':   ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire', 'Superior Grimoire'],
+      '5-Circle': ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire', 'Superior Grimoire', 'Arcane Grimoire'],
+      '6-Circle':   ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire', 'Superior Grimoire', 'Arcane Grimoire', 'Forbidden Tome', 'Necronomicon', 'Celestial Codex'],
+      '7-Circle':   ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire', 'Superior Grimoire', 'Arcane Grimoire', 'Forbidden Tome', 'Necronomicon', 'Celestial Codex'],
+      '8-Circle': ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire', 'Superior Grimoire', 'Arcane Grimoire', 'Forbidden Tome', 'Necronomicon', 'Celestial Codex'],
+      '9-Circle': ['Basic Grimoire', 'Standard Grimoire', 'Advanced Grimoire', 'Superior Grimoire', 'Arcane Grimoire', 'Forbidden Tome', 'Necronomicon', 'Celestial Codex']
+    };
+    
+    // Circle-based Blink max level
+    const BOBEOP_LIMIT = {
+      '1-Circle': 2, '2-Circle': 3, '3-Circle': 4, '4-Circle': 5, '5-Circle': 6,
+      '6-Circle': 7, '7-Circle': 8, '8-Circle': 9, '9-Circle': 10
+    };
+    
+    // Circle-based advanced Grimoire (Maxclass)
+    const DEFAULT_SIMBEOP = {
+      '1-Circle': 'Standard Grimoire', '2-Circle': 'Advanced Grimoire', '3-Circle': 'Superior Grimoire', '4-Circle': 'Superior Grimoire',
+      '5-Circle': 'Arcane Grimoire', '6-Circle': 'Arcane Grimoire', '7-Circle': 'Forbidden Tome', '8-Circle': 'Necronomicon', '9-Circle': 'Necronomicon'
+    };
+    
+    // Spell/Enhancement select available check
+    function getAvailableMugong(gyeongji) {
+      const limit = MUGONG_LIMIT[gyeongji];
+      const result = [];
+      for (const [name, maxLv] of Object.entries(limit)) {
+        if (maxLv > 0) result.push({ name, maxLv });
+      }
+      return result;
+    }
+    
+    function getAvailableBalchul(gyeongji) {
+      const limit = BALCHUL_LIMIT[gyeongji];
+      const result = [];
+      for (const [name, maxLv] of Object.entries(limit)) {
+        if (maxLv !== false) result.push({ name, maxLv: maxLv === true ? 0 : maxLv });
+      }
+      return result;
+    }
+    
+    // circle change when Spell/Enhancement/Grimoire/Blink Max level auto apply
+    function adjustMugongForGyeongji(char) {
+      const mugongLimit = MUGONG_LIMIT[char.gyeongji];
+      const balchulLimit = BALCHUL_LIMIT[char.gyeongji];
+      
+      // Spell: Max available Spell + Max level change
+      if (mugongLimit['Meteor'] > 0) { char.mugong = 'Meteor'; char.mugongLv = mugongLimit['Meteor']; }
+      else if (mugongLimit['Fireball'] > 0) { char.mugong = 'Fireball'; char.mugongLv = mugongLimit['Fireball']; }
+      else { char.mugong = 'Magic Missile'; char.mugongLv = mugongLimit['Magic Missile']; }
+      
+      // Enhancement: Max available Enhancement + Max level change
+      if (balchulLimit['Empower Maximize']) { char.balchul = 'Empower Maximize'; char.balchulLv = balchulLimit['Empower Maximize']; }
+      else if (balchulLimit['Maximize']) { char.balchul = 'Maximize'; char.balchulLv = balchulLimit['Maximize']; }
+      else if (balchulLimit['Quick Overcharge']) { char.balchul = 'Quick Overcharge'; char.balchulLv = balchulLimit['Quick Overcharge']; }
+      else if (balchulLimit['Overcharge']) { char.balchul = 'Overcharge'; char.balchulLv = balchulLimit['Overcharge']; }
+      else { char.balchul = 'None'; char.balchulLv = 1; }
+      
+      // Grimoire: Max available Grimoireto change
+      char.simbeop = DEFAULT_SIMBEOP[char.gyeongji];
+      
+      // Blink: Max level change
+      char.bobeop = BOBEOP_LIMIT[char.gyeongji];
+    }
+    
+    const LEVEL_NAME = ['', 'Minor', 'Lesser', 'Greater', 'Superior', 'Supreme'];
+    const DIRECTIONS = ['Forward', 'Forward-Left', 'Forward-Right', 'Left', 'Right', 'Retreat', 'Back-Left', 'Back-Right'];
+    const APPROACH_DIR = ['Forward', 'Forward-Left', 'Forward-Right'];
+    const RETREAT_DIR = ['Retreat', 'Back-Left', 'Back-Right'];
+    
+    const ATTACK_TYPES = {
+      'Magic Missile': ['Magic Missile Bolt', 'Magic Missile Wave', 'Magic Missile Strike'],
+      'Fireball': ['Fireball Flash', 'Fireball Spin', 'Fireball Blast'],
+      'Meteor': ['Meteor Impact Blast', 'Meteor Slash', 'Phantom Meteor']
+    };
+    
+    const BALCHUL_DESC = {
+      'Overcharge': 'Magic Missilecuts through the air!',
+      'Quick Overcharge': 'Instant Magic Missilebarrage!',
+      'Maximize': 'Massive Meteorrains down!',
+      'Empower Maximize': 'In an instant, Meteorcleaves reality!'
+    };
+    
+    const DEFEND_TYPES = ['Ward deflects', 'Dodges aside', 'Blinks back', 'Shield blocks'];
+    const COMBO_BONUS = { 2: 0.05, 3: 0.10, 4: 0.15 };
+    
+    // ===== state =====
+    let state = {
+      running: false,
+      time: 0,
+      attackCount: 0,
+      winner: null,
+      animFrame: null,
+      lastTime: 0,
+      totalPotionsUsed: 0,
+      hpPotionsUsed: 0,
+      ngPotionsUsed: 0,
+      bobeopTick: 0,  // Blink Mana drain tick (5seceach)
+      maxGyeongjiLevel: 0,  // battle max circle
+      chars: { ally: [], enemy: [] }
+    };
+    
+    let charIdCounter = 0;
+    
+    // ===== character creation =====
+    function createCharacter(team, preset = {}) {
+      const id = ++charIdCounter;
+      const isAlly = team === 'ally';
+      const gyeongji = preset.gyeongji || (isAlly ? '4-Circle' : '3-Circle');
+      
+      // circlefor Max Spell/level
+      const mugongLimit = MUGONG_LIMIT[gyeongji];
+      let defaultMugong = 'Magic Missile';
+      let defaultMugongLv = mugongLimit['Magic Missile'];
+      if (mugongLimit['Meteor'] > 0) { defaultMugong = 'Meteor'; defaultMugongLv = mugongLimit['Meteor']; }
+      else if (mugongLimit['Fireball'] > 0) { defaultMugong = 'Fireball'; defaultMugongLv = mugongLimit['Fireball']; }
+      
+      // circlefor Max Enhancement/level
+      const balchulLimit = BALCHUL_LIMIT[gyeongji];
+      let defaultBalchul = 'None';
+      let defaultBalchulLv = 0;
+      if (balchulLimit['Empower Maximize']) { defaultBalchul = 'Empower Maximize'; defaultBalchulLv = balchulLimit['Empower Maximize']; }
+      else if (balchulLimit['Maximize']) { defaultBalchul = 'Maximize'; defaultBalchulLv = balchulLimit['Maximize']; }
+      else if (balchulLimit['Quick Overcharge']) { defaultBalchul = 'Quick Overcharge'; defaultBalchulLv = balchulLimit['Quick Overcharge']; }
+      else if (balchulLimit['Overcharge']) { defaultBalchul = 'Overcharge'; defaultBalchulLv = balchulLimit['Overcharge']; }
+      
+      // circlefor Max Grimoire
+      const defaultSimbeop = DEFAULT_SIMBEOP[gyeongji];
+      
+      // circlefor Max Blink
+      const defaultBobeop = BOBEOP_LIMIT[gyeongji];
+      
+      return {
+        id, team,
+        name: preset.name || (isAlly ? `Allies${id}` : `Enemies${id}`),
+        gyeongji: gyeongji,
+        simbeop: preset.simbeop || defaultSimbeop,
+        bobeop: preset.bobeop ?? defaultBobeop,
+        mugong: preset.mugong || defaultMugong,
+        mugongLv: preset.mugongLv || defaultMugongLv,
+        balchul: preset.balchul || defaultBalchul,
+        balchulLv: preset.balchulLv || defaultBalchulLv || 1,
+        hp: 100, neigong: 100, ungi: 0,
+        cooldown: 0,  // Disengage/Stagger cooldown
+        lastAttackTime: -999,  // last attack time
+        chargeDebuff: 0,  // chaos debuff (cast charge reduction%)
+        waiting: false,  // waiting state (before join)
+        hpPotions: preset.hpPotions ?? (isAlly ? 5 : 3),
+        ngPotions: preset.ngPotions ?? (isAlly ? 5 : 3),
+        hpThreshold: 50, ngThreshold: 60,
+        currentAction: 'Idle',
+        comboCount: 0, lastTarget: null
+      };
+    }
+    
+    function addCharacter(team) {
+      if (state.chars[team].length >= 5) return;
+      const newChar = createCharacter(team);
+      // battle among Add when waiting state
+      if (state.running) {
+        newChar.waiting = true;
+        newChar.currentAction = 'Waiting to join';
+      }
+      state.chars[team].push(newChar);
+      renderTeam(team);
+      updateAddButtons();
+    }
+    
+    function removeCharacter(team, id) {
+      if (state.running) return;
+      state.chars[team] = state.chars[team].filter(c => c.id !== id);
+      renderTeam(team);
+      updateAddButtons();
+    }
+    
+    function joinBattle(team, id) {
+      const char = state.chars[team].find(c => c.id === id);
+      if (!char || !char.waiting) return;
+      
+      char.waiting = false;
+      char.currentAction = 'Joined!';
+      
+      // max circle recalc
+      const allActiveChars = [...state.chars.ally, ...state.chars.enemy].filter(c => !c.waiting);
+      const newMaxLevel = Math.max(...allActiveChars.map(c => GYEONGJI[c.gyeongji]?.level || 1));
+      
+      // High circle entry when full debuff recalc notify
+      if (newMaxLevel > state.maxGyeongjiLevel) {
+        state.maxGyeongjiLevel = newMaxLevel;
+        addLogTime(`👑 ${char.name}(${char.gyeongji}) enters! The battlefield shifts!`, 'critical');
+      } else {
+        addLogTime(`⚔️ ${char.name}(${char.gyeongji}) Joined!`, 'ready');
+      }
+      
+      // Blink Mana drain applied
+      if (char.bobeop > 0) {
+        const mult = getMultipliers();
+        const g = GYEONGJI[char.gyeongji];
+        const neigongTotal = g.neigong * mult.neigong;
+        const bobeopCost = Math.sqrt(char.bobeop);
+        const costPercent = (bobeopCost / neigongTotal) * 100;
+        char.neigong -= costPercent;
+        char.neigong = Math.max(0, char.neigong);
+        addLogTime(`🦶 ${char.name} Blink activated (Mana -${costPercent.toFixed(2)}%)`, 'move');
+      }
+      
+      renderTeam(team);
+    }
+    
+    function updateAddButtons() {
+      ['ally', 'enemy'].forEach(team => {
+        const btn = document.getElementById(`${team}-add-btn`);
+        btn.disabled = state.chars[team].length >= 5;
+      });
+    }
+    
+    // ===== calc =====
+    function calcChar(char) {
+      const g = GYEONGJI[char.gyeongji];
+      const s = SIMBEOP[char.simbeop];
+      const m = MUGONG[char.mugong]?.[char.mugongLv] || [0, 0];
+      const b = BALCHUL[char.balchul] || { bonus: 0, cost: 0 };
+      
+      const ungiMultiplier = parseFloat(document.getElementById('ungi-multiplier')?.value || 3);
+      const baseTime = 3;  // doc ref: √1 = 3sec
+      const atkTime = baseTime / (ungiMultiplier * g.speed);
+      const ungiPath = Math.sqrt(s.chukgi);
+      const danger = 1 / Math.sqrt(s.stab);
+      
+      // cast charge speed: cast speed(atkTime)sec for 100 cast charge
+      // Grimoire cast speed penalty applied
+      const speedPenalty = char.speedPenalty || 0;
+      const ungiPerSec = (100 / atkTime) * (1 + speedPenalty);
+      
+      // power = √Manaamount × √cast rate × castratio
+      const power = Math.sqrt(g.neigong) * ungiPath * (char.ungi / 100);
+      
+      const bobeopBonus = char.bobeop * 0.1;
+      const moveSpeed = char.bobeop > 0 ? Math.sqrt(char.bobeop) : 1;
+      const mugongBonus = m[0] / 100;
+      const mugongCost = m[1];
+      const balchulBonus = (b.bonus * char.balchulLv / 5) / 100;
+      const balchulCost = b.cost;
+      
+      const threshold = THRESHOLD[s.type];
+      const hpDeadThreshold = parseInt(document.getElementById('hp-dead-threshold')?.value || 30);
+      const isDead = char.neigong <= threshold || char.hp <= hpDeadThreshold;
+      
+      return {
+        g, s, atkTime, ungiPath, danger, ungiPerSec, power,
+        bobeopBonus, moveSpeed, mugongBonus, mugongCost, balchulBonus, balchulCost,
+        threshold, isDead
+      };
+    }
+    
+    function randomPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    
+    // ===== xratio settings =====
+    function getMultipliers() {
+      return {
+        neigong: parseInt(document.getElementById('mult-neigong').value),
+        hp: parseInt(document.getElementById('mult-hp').value),
+        skill: parseInt(document.getElementById('mult-skill').value)
+      };
+    }
+    
+    function getDamageSplit() {
+      const split = document.getElementById('damage-split').value.split('-');
+      return {
+        ng: parseInt(split[0]) / 100,  // Mana ratio
+        hp: parseInt(split[1]) / 100   // HP ratio
+      };
+    }
+    
+    // ===== Spell Match =====
+    function selectMugong(attacker, defender) {
+      const mode = document.getElementById('mugong-response').value;
+      const atkGyeongji = GYEONGJI[attacker.gyeongji].level;
+      const defGyeongji = GYEONGJI[defender.gyeongji].level;
+      
+      // advancedvalue: settingsed Max Spell
+      let mugong = attacker.mugong;
+      let mugongLv = attacker.mugongLv;
+      let balchul = attacker.balchul;
+      let balchulLv = attacker.balchulLv;
+      
+      if (mode === 'max') {
+        // Max: always settingsed Max Spell
+        // advancedvalue as-is
+      } else if (mode === 'match') {
+        // Match: opponent circle/Spellmatch
+        const levelDiff = atkGyeongji - defGyeongji;
+        
+        if (levelDiff >= 3) {
+          // 3+ circle diff → lowest Spell
+          mugongLv = 1;
+          balchul = 'None';
+        } else if (levelDiff >= 2) {
+          // 2circle diff → lower Spell
+          mugongLv = Math.min(2, attacker.mugongLv);
+          balchul = 'None';
+        } else if (levelDiff >= 1) {
+          // 1circle diff → middle Spell
+          mugongLv = Math.min(3, attacker.mugongLv);
+          balchul = 'None';
+        } else {
+          // same or below → opponent Spell+1 or Enhancement use
+          mugongLv = Math.min(attacker.mugongLv, defender.mugongLv + 1);
+          // opponentis Enhancement if possible me too Enhancement
+          if (defender.balchul !== 'None') {
+            balchul = attacker.balchul;
+          } else {
+            balchul = Math.random() > 0.7 ? attacker.balchul : 'None';
+          }
+        }
+      } else if (mode === 'save') {
+        // Save: minimum Spell
+        mugongLv = 1;
+        balchul = 'None';
+      }
+      
+      // Spell data calc
+      const m = MUGONG[mugong]?.[mugongLv] || [0, 0];
+      const b = BALCHUL[balchul] || { bonus: 0, cost: 0 };
+      
+      return {
+        mugong, mugongLv, balchul, balchulLv,
+        mugongBonus: m[0] / 100,
+        mugongCost: m[1],
+        balchulBonus: (b.bonus * balchulLv / 5) / 100,
+        balchulCost: b.cost
+      };
+    }
+    
+    // ===== rendering =====
+    function renderTeam(team) {
+      const container = document.getElementById(`${team}-chars`);
+      const inBattle = state.running;
+      
+      container.innerHTML = state.chars[team].map(char => {
+        const c = calcChar(char);
+        const isWaiting = char.waiting;
+        const statusClass = isWaiting ? 'waiting' : (c.isDead ? 'dead' : 'alive');
+        const statusText = isWaiting ? 'Waiting' : (c.isDead ? 'Incapacitated' : 'Alive');
+        const cardClass = isWaiting ? 'waiting' : (c.isDead ? 'dead' : '');
+        const ungiClass = char.ungi >= 80 ? 'ready' : 'charging';
+        
+        return `
+          <div class="char-card ${team} ${cardClass}" data-id="${char.id}">
+            ${!inBattle ? `<button class="btn-remove" onclick="removeCharacter('${team}', ${char.id})">×</button>` : ''}
+            ${(inBattle && isWaiting) ? `<button class="btn-join" onclick="joinBattle('${team}', ${char.id})">⚔️ Join</button>` : ''}
+            
+            <div class="char-header">
+              <input type="text" value="${char.name}" onchange="updateCharField('${team}', ${char.id}, 'name', this.value)" ${inBattle ? 'disabled' : ''}>
+              <span class="char-status ${statusClass}">${statusText}</span>
+            </div>
+            
+            <div class="config-row">
+              <div class="config-item">
+                <label>circle</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'gyeongji', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${Object.keys(GYEONGJI).map(g => `<option value="${g}" ${char.gyeongji === g ? 'selected' : ''}>${g}</option>`).join('')}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>Grimoire</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'simbeop', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${SIMBEOP_LIMIT[char.gyeongji].map(s => `<option value="${s}" ${char.simbeop === s ? 'selected' : ''}>${s.replace('Grimoire','').replace('Codex','')}</option>`).join('')}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>Blink</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'bobeop', +this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${Array.from({length: BOBEOP_LIMIT[char.gyeongji] + 1}, (_, b) => `<option value="${b}" ${char.bobeop === b ? 'selected' : ''}>${b===0?'None':'Lv'+b}</option>`).join('')}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>Spell</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'mugong', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const limit = MUGONG_LIMIT[char.gyeongji];
+                    return Object.keys(MUGONG).filter(m => limit[m] > 0).map(m => 
+                      `<option value="${m}" ${char.mugong === m ? 'selected' : ''}>${m}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+            </div>
+            
+            <div class="config-row">
+              <div class="config-item">
+                <label>SpellMastery</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'mugongLv', +this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const maxLv = MUGONG_LIMIT[char.gyeongji][char.mugong];
+                    return [1,2,3,4,5].filter(l => l <= maxLv).map(l => 
+                      `<option value="${l}" ${char.mugongLv === l ? 'selected' : ''}>${LEVEL_NAME[l]}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>Enhancement</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'balchul', this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const limit = BALCHUL_LIMIT[char.gyeongji];
+                    return Object.keys(BALCHUL).filter(b => limit[b] !== false).map(b => 
+                      `<option value="${b}" ${char.balchul === b ? 'selected' : ''}>${b}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>EnhancementMastery</label>
+                <select onchange="updateCharField('${team}', ${char.id}, 'balchulLv', +this.value)" ${inBattle ? 'disabled' : ''}>
+                  ${(() => {
+                    const limit = BALCHUL_LIMIT[char.gyeongji];
+                    const maxLv = limit[char.balchul];
+                    if (maxLv === true || maxLv === 0 || char.balchul === 'None') {
+                      return '<option value="1">-</option>';
+                    }
+                    return [1,2,3,4,5].filter(l => l <= maxLv).map(l => 
+                      `<option value="${l}" ${char.balchulLv === l ? 'selected' : ''}>${LEVEL_NAME[l]}</option>`
+                    ).join('');
+                  })()}
+                </select>
+              </div>
+              <div class="config-item">
+                <label>power</label>
+                <div style="font-size:0.7rem;color:#ffd700;padding-top:2px;">${c.power.toFixed(1)}</div>
+              </div>
+            </div>
+            
+            <div class="ungi-row">
+              <span class="ungi-label">🌀</span>
+              <div class="ungi-bar-wrap">
+                <div class="ungi-threshold"></div>
+                <div class="ungi-bar ${team} ${ungiClass}" style="width: ${Math.min(100, char.ungi)}%"></div>
+              </div>
+              <span class="ungi-value ${ungiClass}">${char.ungi.toFixed(0)}%</span>
+            </div>
+            
+            <div class="stat-row">
+              <div class="stat-item">
+                <div class="label"><span>HP</span><span class="highlight-red">${char.hp.toFixed(1)}</span></div>
+                <div class="track"><div class="fill hp" style="width:${Math.max(0,char.hp)}%"></div></div>
+              </div>
+              <div class="stat-item">
+                <div class="label"><span>Mana</span><span class="highlight-blue">${char.neigong.toFixed(1)}</span></div>
+                <div class="track"><div class="fill ng" style="width:${Math.max(0,char.neigong)}%"></div></div>
+              </div>
+            </div>
+            
+            <div class="potion-row">
+              <div class="potion-item">
+                ❤️<span class="potion-count ${char.hpPotions===0?'empty':''}">${char.hpPotions}</span>
+                ${!inBattle ? `<input type="number" class="potion-input" value="${char.hpPotions}" min="0" max="99" onchange="updateCharField('${team}', ${char.id}, 'hpPotions', +this.value)">` : ''}
+              </div>
+              <div class="potion-item">
+                💙<span class="potion-count ${char.ngPotions===0?'empty':''}">${char.ngPotions}</span>
+                ${!inBattle ? `<input type="number" class="potion-input" value="${char.ngPotions}" min="0" max="99" onchange="updateCharField('${team}', ${char.id}, 'ngPotions', +this.value)">` : ''}
+              </div>
+            </div>
+            
+            <div class="action-row ${getActionClass(char.currentAction)}">${char.currentAction}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function getActionClass(action) {
+      if (action.includes('Potion')) return 'potion';
+      if (action.includes('sword') || action.includes('Enhancement') || action.includes('slash')) return 'attack';
+      if (action.includes('defend') || action.includes('dodge') || action.includes('block')) return 'defend';
+      return 'move';
+    }
+    
+    function updateCharField(team, id, field, value) {
+      const char = state.chars[team].find(c => c.id === id);
+      if (char) {
+        char[field] = value;
+        
+        // circle change when Spell/Enhancement auto adjust
+        if (field === 'gyeongji') {
+          adjustMugongForGyeongji(char);
+        }
+        // Spell change when level adjust
+        if (field === 'mugong') {
+          const maxLv = MUGONG_LIMIT[char.gyeongji][char.mugong];
+          if (char.mugongLv > maxLv) char.mugongLv = maxLv;
+          if (char.mugongLv < 1) char.mugongLv = 1;
+        }
+        // Enhancement change when level adjust
+        if (field === 'balchul') {
+          const limit = BALCHUL_LIMIT[char.gyeongji];
+          if (limit[char.balchul] !== true && limit[char.balchul] > 0) {
+            if (char.balchulLv > limit[char.balchul]) char.balchulLv = limit[char.balchul];
+            if (char.balchulLv < 1) char.balchulLv = 1;
+          }
+        }
+        
+        renderTeam(team);
+      }
+    }
+    
+    function renderAll() {
+      renderTeam('ally');
+      renderTeam('enemy');
+      document.getElementById('battle-time').textContent = state.time.toFixed(1);
+      document.getElementById('attack-count').textContent = state.attackCount;
+      document.getElementById('potion-used').textContent = state.totalPotionsUsed;
+    }
+    
+    // ===== log =====
+    function addLog(text, cls = '') {
+      const el = document.getElementById('log-content');
+      const line = document.createElement('div');
+      line.className = `log-line ${cls}`;
+      line.textContent = text;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+    
+    function addLogTime(text, cls = '') {
+      addLog(`[${state.time.toFixed(2)}s] ${text}`, cls);
+    }
+    
+    // ===== targeting =====
+    function getAliveChars(team) {
+      return state.chars[team].filter(c => !calcChar(c).isDead);
+    }
+    
+    // sequential battle when battle participating availableenemy (first alive enemyonly)
+    function getActiveEnemies(team) {
+      const battleMode = document.getElementById('battle-mode').value;
+      const alive = getAliveChars(team);
+      
+      if (battleMode === 'sequential' && alive.length > 0) {
+        return [alive[0]];  // first enemyonly
+      }
+      return alive;  // simultaneous battle: all
+    }
+    
+    function selectTarget(attacker, enemies) {
+      const battleMode = document.getElementById('battle-mode').value;
+      let alive = enemies.filter(e => !e.waiting && !calcChar(e).isDead);
+      
+      // sequential battle: first alive enemyonly target available
+      if (battleMode === 'sequential' && alive.length > 0) {
+        return alive[0];
+      }
+      
+      if (alive.length === 0) return null;
+      
+      const mode = document.getElementById('targeting-mode').value;
+      if (mode === 'weakest') return alive.reduce((a, b) => a.neigong < b.neigong ? a : b);
+      if (mode === 'strongest') return alive.reduce((a, b) => calcChar(a).power > calcChar(b).power ? a : b);
+      return randomPick(alive);
+    }
+    
+    // ===== Potion =====
+    function usePotion(char) {
+      const c = calcChar(char);
+      if (c.isDead) return;
+      
+      const healAmountHp = parseInt(document.getElementById('potion-heal-hp').value);
+      const healAmountNg = parseInt(document.getElementById('potion-heal-ng').value);
+      const hpThreshold = parseInt(document.getElementById('hp-threshold').value);
+      const ngThreshold = parseInt(document.getElementById('ng-threshold').value);
+      
+      if (char.hp <= hpThreshold && char.hpPotions > 0) {
+        const heal = Math.min(healAmountHp, 100 - char.hp);
+        char.hp += heal;
+        char.hpPotions--;
+        state.totalPotionsUsed++;
+        state.hpPotionsUsed++;
+        addLogTime(`💊 ${char.name} HP Potion! (+${heal.toFixed(1)}%)`, 'potion');
+        char.currentAction = 'HP Potion';
+      }
+      
+      if (char.neigong <= ngThreshold && char.ngPotions > 0) {
+        const heal = Math.min(healAmountNg, 100 - char.neigong);
+        char.neigong += heal;
+        char.ngPotions--;
+        state.totalPotionsUsed++;
+        state.ngPotionsUsed++;
+        addLogTime(`💊 ${char.name} Mana Potion! (+${heal.toFixed(1)}%)`, 'potion');
+        char.currentAction = 'Mana Potion';
+      }
+    }
+    
+    // ===== battle =====
+    function processAttack(attacker, defender) {
+      const atkCalc = calcChar(attacker);
+      const defCalc = calcChar(defender);
+      
+      if (atkCalc.isDead || defCalc.isDead) return;
+      
+      state.attackCount++;
+      
+      // combo
+      if (attacker.lastTarget === defender.id) attacker.comboCount++;
+      else { attacker.comboCount = 1; attacker.lastTarget = defender.id; }
+      
+      // Spell Match select
+      const selectedMugong = selectMugong(attacker, defender);
+      
+      // Mana consume (Manatotal = Manaamount × xratio)
+      const costMult = getMultipliers();
+      const neigongTotal = atkCalc.g.neigong * costMult.neigong;  // Manatotal
+      const mugongCost = selectedMugong.mugongCost + selectedMugong.balchulCost;
+      const costPercent = (mugongCost / neigongTotal) * 100;  // cost ratio(%)
+      
+      if (attacker.neigong < costPercent + atkCalc.threshold) {
+        addLogTime(`${attacker.name}: Mana depleted!`, 'critical');
+        attacker.ungi = 0;
+        return;
+      }
+      attacker.neigong -= costPercent;
+      
+      // hit rate penalty: Mana based on below → 5% + (based on-Mana)×5% miss chance
+      const missNgThreshold = parseInt(document.getElementById('miss-ng-threshold')?.value || 50);
+      let missChance = 0;
+      if (attacker.neigong <= missNgThreshold) {
+        missChance = 5 + (missNgThreshold - attacker.neigong) * 5;
+      }
+      
+      // HP penalty: based on below → power reduction
+      const hpPenaltyThreshold = parseInt(document.getElementById('hp-penalty-threshold')?.value || 80);
+      const hpPenaltyInit = parseInt(document.getElementById('hp-penalty-init')?.value || 3) / 100;
+      const hpPenaltyPerPercent = parseInt(document.getElementById('hp-penalty-rate')?.value || 1) / 100;
+      let hpPenalty = 0;
+      if (attacker.hp <= hpPenaltyThreshold) {
+        hpPenalty = hpPenaltyInit + (hpPenaltyThreshold - attacker.hp) * hpPenaltyPerPercent;
+      }
+      
+      // miss check
+      if (missChance > 0 && Math.random() * 100 < missChance) {
+        addLog(`━━ ${state.attackCount}rounds: ${attacker.name} → ${defender.name} ━━`, 'divider');
+        addLogTime(`${attacker.name}attack이 missed! (hit rate -${missChance.toFixed(0)}%)`, 'naesang');
+        
+        // if miss attackeronly Mana Burn
+        const dmgSplit = getDamageSplit();
+        const atkRemain = 100 - attacker.ungi;
+        const atkStabReduce = 1 - (atkCalc.s.stab / 500);
+        const atkDefBonus = selectedMugong.mugongBonus;
+        const atkNaesang = atkRemain * atkCalc.danger * atkStabReduce * (1 - atkDefBonus);
+        attacker.hp -= atkNaesang * dmgSplit.hp;
+        attacker.neigong -= atkNaesang * dmgSplit.ng;
+        if (atkNaesang > 0.5) addLogTime(`  ${attacker.name} Mana Burn -${atkNaesang.toFixed(1)} (miss)`, 'naesang');
+        
+        attacker.ungi = 0;
+        attacker.currentAction = 'cast recovery';
+        return;
+      }
+      
+      // direction
+      const atkDir = randomPick(APPROACH_DIR);
+      const defDir = randomPick(DIRECTIONS);
+      let dirBonus = 0;
+      if (atkDir === 'Forward') dirBonus += 0.10;
+      else dirBonus += 0.08;
+      if (RETREAT_DIR.includes(defDir)) dirBonus += 0.10;
+      
+      const comboBonus = COMBO_BONUS[Math.min(4, attacker.comboCount)] || 0;
+      const atkUngi = attacker.ungi;
+      const defUngi = defender.ungi;
+      
+      addLog(`━━ ${state.attackCount}rounds: ${attacker.name} → ${defender.name} ━━`, 'divider');
+      
+      // move
+      addLogTime(`${attacker.name}, ${atkDir}!`, 'move');
+      attacker.currentAction = `${atkDir} approach`;
+      defender.currentAction = `${defDir} Match`;
+      
+      // Spell (Match mode applied)
+      const usesBalchul = selectedMugong.balchul !== 'None' && Math.random() > 0.5;
+      if (usesBalchul) {
+        addLogTime(`${attacker.name}s ${selectedMugong.balchul}─「${BALCHUL_DESC[selectedMugong.balchul]}」`, 'attack');
+        attacker.currentAction = selectedMugong.balchul;
+      } else {
+        const atkType = randomPick(ATTACK_TYPES[selectedMugong.mugong]);
+        addLogTime(`${attacker.name}s ${selectedMugong.mugong} ${LEVEL_NAME[selectedMugong.mugongLv]}─「${atkType}」`, 'attack');
+        attacker.currentAction = atkType;
+      }
+      
+      // defend
+      const defend = randomPick(DEFEND_TYPES);
+      addLogTime(`${defender.name}, ${defend}!`, 'defend');
+      defender.currentAction = defend;
+      
+      // Mana Burn (damageSplit + stability/500 reduction + Spell defense reduction)
+      const dmgSplit = getDamageSplit();
+      const atkRemain = 100 - atkUngi;
+      const defRemain = 100 - defUngi;
+      
+      // stability/500 = Mana Burndamage Penalty
+      const atkStabReduce = 1 - (atkCalc.s.stab / 500);
+      const defStabReduce = 1 - (defCalc.s.stab / 500);
+      
+      // Spell defense = Mana Burn reduction (attackeris 자기 Spell, defender도 자기 Spell)
+      const atkDefBonus = usesBalchul ? selectedMugong.balchulBonus : selectedMugong.mugongBonus;
+      const defMugong = MUGONG[defender.mugong]?.[defender.mugongLv] || [0, 0];
+      const defDefBonus = defMugong[0] / 100;
+      
+      if (atkUngi < 100) {
+        const atkNaesang = atkRemain * atkCalc.danger * atkStabReduce * (1 - atkDefBonus);
+        attacker.hp -= atkNaesang * dmgSplit.hp;
+        attacker.neigong -= atkNaesang * dmgSplit.ng;
+        if (atkNaesang > 0.5) addLogTime(`  ${attacker.name} Mana Burn -${atkNaesang.toFixed(1)} (defend${(atkDefBonus*100).toFixed(0)}%)`, 'naesang');
+      }
+      
+      const defNaesang = defRemain * defCalc.danger * defStabReduce * (1 - defDefBonus);
+      defender.hp -= defNaesang * dmgSplit.hp;
+      defender.neigong -= defNaesang * dmgSplit.ng;
+      if (defNaesang > 0.5) addLogTime(`  ${defender.name} Mana Burn -${defNaesang.toFixed(1)} (defend${(defDefBonus*100).toFixed(0)}%)`, 'naesang');
+      
+      // damage (xratio + damageSplit + circle/Grimoire  Blastdiff penalty)
+      const mult = getMultipliers();
+      
+      // circle diff penalty: lower circle -3%/tier
+      const levelDiff = atkCalc.g.level - defCalc.g.level;
+      let gyeongjiPenalty = levelDiff < 0 ? levelDiff * 0.03 : 0;
+      
+      // Grimoire  Blastdiff penalty: lower Grimoire -3%/tier
+      const simbeopDiff = atkCalc.s.tier - defCalc.s.tier;
+      let simbeopPenalty = simbeopDiff < 0 ? simbeopDiff * 0.03 : 0;
+      
+      // HP penalty: 80% or less power reduction (이미 above calculated)
+      let modifier = (1 + gyeongjiPenalty + simbeopPenalty) * (1 - hpPenalty);
+      
+      const mugongBonus = usesBalchul ? selectedMugong.balchulBonus : selectedMugong.mugongBonus;
+      const totalBonus = atkCalc.bobeopBonus + mugongBonus + dirBonus + comboBonus;
+      
+      // total = Manaamount × xratio
+      const defNeigongTotal = defCalc.g.neigong * mult.neigong;  // Manatotal
+      const defHpTotal = defCalc.g.neigong * mult.hp;            // HPtotal
+      
+      // advanced damage (power based)
+      const baseDamage = atkCalc.power * modifier;
+      const totalDamage = baseDamage * (1 + totalBonus);
+      
+      // defender total based onto ratio convert
+      const ngDmgPercent = (totalDamage / defNeigongTotal) * 100;
+      const hpDmgPercent = (totalDamage / defHpTotal) * 100;
+      
+      defender.hp -= hpDmgPercent * dmgSplit.hp;
+      defender.neigong -= ngDmgPercent * dmgSplit.ng;
+      
+      // bonus/penalty display
+      let bonusDesc = [];
+      if (atkCalc.bobeopBonus > 0) bonusDesc.push(`Blink+${(atkCalc.bobeopBonus*100).toFixed(0)}%`);
+      if (mugongBonus > 0) bonusDesc.push(`Spell+${(mugongBonus*100).toFixed(0)}%`);
+      if (dirBonus > 0) bonusDesc.push(`move+${(dirBonus*100).toFixed(0)}%`);
+      if (comboBonus > 0) bonusDesc.push(`${attacker.comboCount}combo+${(comboBonus*100).toFixed(0)}%`);
+      if (gyeongjiPenalty < 0) bonusDesc.push(`circlediff${(gyeongjiPenalty*100).toFixed(0)}%`);
+      if (simbeopPenalty < 0) bonusDesc.push(`Grimoirediff${(simbeopPenalty*100).toFixed(0)}%`);
+      if (hpPenalty > 0) bonusDesc.push(`HP↓${(hpPenalty*100).toFixed(0)}%`);
+      
+      if (bonusDesc.length > 0) addLogTime(`  [${bonusDesc.join(', ')}]`, 'combo');
+      addLogTime(`  ⚔️ HP-${(hpDmgPercent * dmgSplit.hp).toFixed(1)}%, Mana-${(ngDmgPercent * dmgSplit.ng).toFixed(1)}%`, 'damage');
+      
+      // cleanup
+      [attacker, defender].forEach(c => {
+        c.hp = Math.max(0, c.hp);
+        c.neigong = Math.max(0, c.neigong);
+      });
+      
+      // attacker: cast 0 reset (Disengage cooldown remove - Real-time Combat)
+      attacker.ungi = 0;
+      attacker.currentAction = 'cast recovery';
+      addLogTime(`  ↩️ ${attacker.name} Disengage`, 'move');
+      
+      // defender: cast maintained, ready for counter
+      
+      // Incapacitated
+      if (calcChar(defender).isDead) {
+        addLogTime(`💀 ${defender.name} Incapacitated!`, 'critical');
+        
+        // sequential battle: next enemy notify
+        const battleMode = document.getElementById('battle-mode').value;
+        if (battleMode === 'sequential' && defender.team === 'enemy') {
+          const remainingEnemies = getAliveChars('enemy');
+          if (remainingEnemies.length > 0) {
+            addLogTime(`➡️ next enemy: ${remainingEnemies[0].name} appears! (remaining: ${remainingEnemies.length})`, 'ready');
+          }
+        }
+      }
+      if (calcChar(attacker).isDead) {
+        addLogTime(`💀 ${attacker.name} collapsed from Mana Burn!`, 'critical');
+      }
+    }
+    
+    // ===== game loop =====
+    function gameLoop(timestamp) {
+      if (!state.running) return;
+      
+      const speed = parseFloat(document.getElementById('sim-speed').value);
+      if (state.lastTime === 0) state.lastTime = timestamp;
+      
+      const delta = (timestamp - state.lastTime) / 1000 * speed;
+      state.lastTime = timestamp;
+      state.time += delta;
+      
+      // Blink Mana drain (5seceach, Manatotal based)
+      const currentTick = Math.floor(state.time / 5);
+      if (currentTick > state.bobeopTick) {
+        state.bobeopTick = currentTick;
+        const mult = getMultipliers();
+        [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+          if (!char.waiting && !calcChar(char).isDead && char.bobeop > 0) {
+            const g = GYEONGJI[char.gyeongji];
+            const neigongTotal = g.neigong * mult.neigong;
+            const bobeopCost = Math.sqrt(char.bobeop);
+            const costPercent = (bobeopCost / neigongTotal) * 100;
+            char.neigong -= costPercent;
+            char.neigong = Math.max(0, char.neigong);
+            addLogTime(`🦶 ${char.name} Blink maintained (Mana -${costPercent.toFixed(2)}%)`, 'move');
+          }
+        });
+      }
+      
+      // sequential battle mode: Enemies among first only battle participating
+      const battleMode = document.getElementById('battle-mode').value;
+      const activeEnemies = battleMode === 'sequential' 
+        ? getActiveEnemies('enemy')
+        : state.chars.enemy;
+      
+      // cast charge + cooldown reduction + Potion
+      [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+        const c = calcChar(char);
+        
+        // Waiting(before join) char is skip
+        if (char.waiting) {
+          char.currentAction = 'Waiting to join';
+          return;
+        }
+        
+        // sequential battle: inactive enemy is Waiting
+        if (battleMode === 'sequential' && char.team === 'enemy') {
+          if (!activeEnemies.includes(char)) {
+            if (!c.isDead) char.currentAction = 'Waiting (sequential)';
+            return;  // cast charge skip
+          }
+        }
+        
+        if (!c.isDead) {
+          // 1sec no attack for chaos debuff reset
+          if (state.time - char.lastAttackTime >= 1) {
+            if (char.chargeDebuff > 0) {
+              char.chargeDebuff = 0;
+            }
+          }
+          
+          // cast charge (chaos debuff applied)
+          const debuffMult = 1 - (char.chargeDebuff / 100);
+          char.ungi += c.ungiPerSec * delta * debuffMult;
+          char.ungi = Math.min(100, char.ungi);
+          
+          // state display
+          if (char.ungi >= 80) {
+            char.currentAction = char.chargeDebuff > 0 ? `attack ready (chaos-${char.chargeDebuff}%)` : 'attack ready';
+          } else {
+            char.currentAction = char.chargeDebuff > 0 ? `cast ${char.ungi.toFixed(0)}% (chaos-${char.chargeDebuff}%)` : `cast ${char.ungi.toFixed(0)}%`;
+          }
+          
+          usePotion(char);
+        }
+      });
+      
+      // attack available char collect (cast 80% or more + cooldown None)
+      // sequential battle: Enemiesis active enemy only
+      let combatants = [...state.chars.ally];
+      if (battleMode === 'sequential') {
+        combatants = [...combatants, ...activeEnemies];
+      } else {
+        combatants = [...combatants, ...state.chars.enemy];
+      }
+      
+      const readyChars = combatants
+        .filter(c => c.ungi >= 80 && !c.waiting && !calcChar(c).isDead)
+        .map(c => ({ char: c, calc: calcChar(c) }))
+        .sort((a, b) => {
+          if (b.calc.moveSpeed !== a.calc.moveSpeed) return b.calc.moveSpeed - a.calc.moveSpeed;
+          return a.calc.atkTime - b.calc.atkTime;
+        });
+      
+      // ready all chars simultaneous attack
+      readyChars.forEach(({ char: attacker }) => {
+        const enemies = attacker.team === 'ally' ? state.chars.enemy : state.chars.ally;
+        const target = selectTarget(attacker, enemies);
+        
+        if (target && !calcChar(attacker).isDead) {
+          // 1sec within attack when chaos debuff (Circle-based variable)
+          if (state.time - attacker.lastAttackTime < 1) {
+            // circlediff based chaos debuff: max circle based on 1circlediffeach +1%
+            const gyeongjiLevel = GYEONGJI[attacker.gyeongji].level;
+            const gyeongjiDiff = state.maxGyeongjiLevel - gyeongjiLevel;
+            const debuffAmount = 1 + gyeongjiDiff;  // max 1%, 1circle diff 2%, 2circle diff 3%...
+            attacker.chargeDebuff += debuffAmount;
+            addLogTime(`⚡ ${attacker.name} chaos! (charge -${attacker.chargeDebuff}%, circlediff ${gyeongjiDiff})`, 'naesang');
+          }
+          attacker.lastAttackTime = state.time;
+          
+          processAttack(attacker, target);
+        }
+      });
+      
+      renderAll();
+      
+      // win check
+      const allyAlive = getAliveChars('ally').length;
+      const enemyAlive = getAliveChars('enemy').length;
+      
+      if (allyAlive === 0 || enemyAlive === 0) {
+        if (allyAlive === 0 && enemyAlive === 0) {
+          state.winner = 'draw';
+          endBattle('⚔️ Mutual Destruction!');
+        } else if (allyAlive === 0) {
+          state.winner = 'enemy';
+          endBattle(`🏆 Enemies Victory! (${state.time.toFixed(1)}s, ${state.attackCount}rounds)`);
+        } else {
+          state.winner = 'ally';
+          endBattle(`🏆 Allies Victory! (${state.time.toFixed(1)}s, ${state.attackCount}rounds)`);
+        }
+        return;
+      }
+      
+      state.animFrame = requestAnimationFrame(gameLoop);
+    }
+    
+    // ===== controls =====
+    function startBattle() {
+      const allyCount = state.chars.ally.length;
+      const enemyCount = state.chars.enemy.length;
+      
+      if (allyCount === 0 || enemyCount === 0) {
+        alert('Place at least 1 per team!');
+        return;
+      }
+      
+      if (state.running) return;
+      state.running = true;
+      state.lastTime = 0;
+      
+      // battle max circle calc (chaos debuff based on)
+      const allChars = [...state.chars.ally, ...state.chars.enemy];
+      state.maxGyeongjiLevel = Math.max(...allChars.map(c => GYEONGJI[c.gyeongji]?.level || 1));
+      
+      // Grimoire cast speed penalty calc (Start Battle when)
+      const allyMaxTier = Math.max(...state.chars.ally.map(c => SIMBEOP[c.simbeop]?.tier || 0));
+      const enemyMaxTier = Math.max(...state.chars.enemy.map(c => SIMBEOP[c.simbeop]?.tier || 0));
+      
+      state.chars.ally.forEach(char => {
+        const myTier = SIMBEOP[char.simbeop]?.tier || 0;
+        const diff = myTier - enemyMaxTier;
+        char.speedPenalty = diff < 0 ? diff * 0.03 : 0;  // lower Grimoire -3%/tier
+      });
+      
+      state.chars.enemy.forEach(char => {
+        const myTier = SIMBEOP[char.simbeop]?.tier || 0;
+        const diff = myTier - allyMaxTier;
+        char.speedPenalty = diff < 0 ? diff * 0.03 : 0;
+      });
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-stop').style.display = 'inline-block';
+      updateAddButtons();
+      
+      if (state.time === 0) {
+        document.getElementById('log-content').innerHTML = '';
+        
+        const battleMode = document.getElementById('battle-mode').value;
+        if (battleMode === 'sequential') {
+          addLog(`━━━ sequential battle: ${allyCount} vs ${enemyCount} (Solo) ━━━`, 'divider');
+          addLogTime(`🎯 first enemy: ${state.chars.enemy[0].name}`, 'ready');
+        } else {
+          addLog(`━━━ simultaneous battle: ${allyCount} vs ${enemyCount} ━━━`, 'divider');
+        }
+        
+        // Grimoire  Blastdiff display
+        [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+          if (char.speedPenalty < 0) {
+            addLogTime(`⚠️ ${char.name}: Grimoire disadvantage (cast speed ${(char.speedPenalty*100).toFixed(0)}%)`, 'naesang');
+          }
+        });
+        
+        addLogTime('Both sides face each other...', 'info');
+        addLogTime('castbegins!', 'ready');
+        
+        // 0secat Blink Mana drain applied (Manatotal based)
+        const mult = getMultipliers();
+        [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+          if (char.bobeop > 0) {
+            const g = GYEONGJI[char.gyeongji];
+            const neigongTotal = g.neigong * mult.neigong;
+            const bobeopCost = Math.sqrt(char.bobeop);
+            const costPercent = (bobeopCost / neigongTotal) * 100;
+            char.neigong -= costPercent;
+            char.neigong = Math.max(0, char.neigong);
+            addLogTime(`🦶 ${char.name} Blink activated (Mana -${costPercent.toFixed(2)}%)`, 'move');
+          }
+        });
+      }
+      
+      renderAll();
+      state.animFrame = requestAnimationFrame(gameLoop);
+    }
+    
+    function stopBattle() {
+      state.running = false;
+      state.lastTime = 0;
+      if (state.animFrame) cancelAnimationFrame(state.animFrame);
+      
+      document.getElementById('btn-start').style.display = 'inline-block';
+      document.getElementById('btn-stop').style.display = 'none';
+      
+      addLogTime('battle paused', 'info');
+      renderAll();
+    }
+    
+    function endBattle(resultText) {
+      state.running = false;
+      if (state.animFrame) cancelAnimationFrame(state.animFrame);
+      
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-stop').style.display = 'none';
+      
+      document.getElementById('battle-result').style.display = 'block';
+      document.getElementById('result-text').textContent = resultText;
+      
+      addLog('━━━━━━━━━━━━━━━━━━━━', 'divider');
+      addLog(resultText, 'ready');
+      
+      // Potion usage breakdown display
+      if (state.totalPotionsUsed > 0) {
+        addLog(`💊 Potion use: HP ${state.hpPotionsUsed}pcs / Mana ${state.ngPotionsUsed}pcs (total ${state.totalPotionsUsed}pcs)`, 'potion');
+      }
+      
+      renderAll();
+    }
+    
+    function resetBattle() {
+      stopBattle();
+      
+      state.time = 0;
+      state.attackCount = 0;
+      state.winner = null;
+      state.totalPotionsUsed = 0;
+      state.hpPotionsUsed = 0;
+      state.ngPotionsUsed = 0;
+      state.bobeopTick = 0;
+      state.maxGyeongjiLevel = 0;
+      
+      [...state.chars.ally, ...state.chars.enemy].forEach(char => {
+        char.hp = 100;
+        char.neigong = 100;
+        char.ungi = 0;
+        char.cooldown = 0;
+        char.speedPenalty = 0;
+        char.lastAttackTime = -999;
+        char.chargeDebuff = 0;
+        char.waiting = false;
+        char.currentAction = 'Idle';
+        char.comboCount = 0;
+        char.lastTarget = null;
+      });
+      
+      document.getElementById('btn-start').style.display = 'inline-block';
+      document.getElementById('btn-stop').style.display = 'none';
+      document.getElementById('battle-result').style.display = 'none';
+      
+      updateAddButtons();
+      
+      document.getElementById('log-content').innerHTML = `
+        <div class="log-line info">Place characters and start battle.</div>
+        <div class="log-line info">Up to 3 vs 3 battles supported.</div>
+      `;
+      
+      renderAll();
+    }
+    
+    // ===== Export =====
+    function exportSettings() {
+      const settings = {
+        version: 'S-Engine v10.0',
+        timestamp: new Date().toISOString(),
+        basic: {
+          simSpeed: document.getElementById('sim-speed').value + 'x',
+          castSpeed: document.getElementById('ungi-multiplier').value + 'x',
+          battleMode: document.getElementById('battle-mode').value,
+          target: document.getElementById('targeting-mode').value,
+          spellMode: document.getElementById('mugong-response').value
+        },
+        potion: {
+          hpRecovery: document.getElementById('potion-heal-hp').value + '%',
+          manaRecovery: document.getElementById('potion-heal-ng').value + '%',
+          hpAutoThreshold: document.getElementById('hp-threshold').value + '%',
+          manaAutoThreshold: document.getElementById('ng-threshold').value + '%'
+        },
+        incap: {
+          hpKO: document.getElementById('hp-dead-threshold').value + '%',
+          manaKO: document.getElementById('ng-dead-threshold').value + '%',
+          manaHitThreshold: document.getElementById('miss-ng-threshold').value + '%',
+          hpHitThreshold: document.getElementById('hp-penalty-threshold').value + '%',
+          penaltyInit: document.getElementById('hp-penalty-init').value + '%',
+          penalty1per: document.getElementById('hp-penalty-rate').value + '%'
+        },
+        mult: {
+          mana: document.getElementById('mult-neigong').value + 'x',
+          hp: document.getElementById('mult-hp').value + 'x',
+          spellCost: document.getElementById('mult-skill').value + 'x',
+          damageSplit: document.getElementById('damage-split').value
+        }
+      };
+      
+      const text = `═══════════════════════════════════════
+  S-Engine Magic Combat Simulator Settings
+  ${settings.version}
+  ${settings.timestamp}
+═══════════════════════════════════════
+
+【Basic Settings】
+  Sim Speed: ${settings.basic.simSpeed}
+  Cast Speed: ${settings.basic.castSpeed}
+  Battle Mode: ${settings.basic.battleMode}
+  Target: ${settings.basic.target}
+  Spell Mode: ${settings.basic.spellMode}
+
+【Potion Settings】
+  HP Recovery: ${settings.potion.hpRecovery}
+  Mana Recovery: ${settings.potion.manaRecovery}
+  HP Auto Threshold: ${settings.potion.hpAutoThreshold}
+  Mana Auto Threshold: ${settings.potion.manaAutoThreshold}
+
+【Incapacitation】
+  HP KO: ${settings.incap.hpKO}
+  Mana KO: ${settings.incap.manaKO}
+  Mana Hit Threshold: ${settings.incap.manaHitThreshold}
+  HP Hit Threshold: ${settings.incap.hpHitThreshold}
+  Penalty(Init): ${settings.incap.penaltyInit}
+  Penalty(1%per): ${settings.incap.penalty1per}
+
+【Stat Multipliers】
+  Mana: ${settings.mult.mana}
+  HP: ${settings.mult.hp}
+  Spell Cost: ${settings.mult.spellCost}
+  Damage Split: ${settings.mult.damageSplit}
+
+═══════════════════════════════════════
+  by ShadowK | NLCS S-Engine
+═══════════════════════════════════════`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Settings copied to clipboard!');
+      }).catch(() => {
+        // Show textarea on clipboard failure
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.top = '50%';
+        textarea.style.left = '50%';
+        textarea.style.transform = 'translate(-50%, -50%)';
+        textarea.style.width = '500px';
+        textarea.style.height = '400px';
+        textarea.style.zIndex = '9999';
+        textarea.style.background = '#1a1a2e';
+        textarea.style.color = '#fff';
+        textarea.style.padding = '10px';
+        textarea.style.border = '2px solid #ffd700';
+        textarea.style.borderRadius = '8px';
+        textarea.style.fontFamily = 'monospace';
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.focus();
+        setTimeout(() => {
+          if (confirm('Press OK after Ctrl+C.')) {
+            document.body.removeChild(textarea);
+          }
+        }, 100);
+      });
+    }
+    
+    // ===== Reset =====
+    function init() {
+      // advanced place: 1 vs 3 (solo scenario)
+      state.chars.ally.push(createCharacter('ally', {
+        name: 'Archmage', gyeongji: '4-Circle', simbeop: 'Advanced Grimoire',
+        mugong: 'Meteor', mugongLv: 1, bobeop: 5,  // 4-Circleis Meteor Minormax
+        balchul: 'Overcharge', balchulLv: 2,       // 4-Circleis Overcharge Lessermax
+        hpPotions: 5, ngPotions: 5
+      }));
+      
+      state.chars.enemy.push(createCharacter('enemy', {
+        name: 'Dark Mage', gyeongji: '3-Circle', simbeop: 'Standard Grimoire',
+        mugong: 'Fireball', mugongLv: 2, bobeop: 3,  // 3-Circleis Fireball Lessermax
+        balchul: 'Overcharge', balchulLv: 1,       // 3-Circleis Overcharge Minormax
+        hpPotions: 2, ngPotions: 2
+      }));
+      state.chars.enemy.push(createCharacter('enemy', {
+        name: 'Cultist1', gyeongji: '2-Circle', simbeop: 'Standard Grimoire',
+        mugong: 'Magic Missile', mugongLv: 2, bobeop: 2,  // 2-Circleis Magic Missile Lessermax
+        balchul: 'None', balchulLv: 1,           // 2-Circleis Enhancement KO
+        hpPotions: 1, ngPotions: 1
+      }));
+      state.chars.enemy.push(createCharacter('enemy', {
+        name: 'Cultist2', gyeongji: '1-Circle', simbeop: 'Basic Grimoire',
+        mugong: 'Magic Missile', mugongLv: 1, bobeop: 1,  // 1-Circleis Magic Missile Minoronly
+        balchul: 'None', balchulLv: 1,           // 1-Circleis Enhancement KO
+        hpPotions: 1, ngPotions: 1
+      }));
+      
+      renderAll();
+      updateAddButtons();
+    }
+    
+    init();
+  </script>
+</body>
+</html>
